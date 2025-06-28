@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import NotificationBell from '@/components/NotificationBell';
 import { 
   Heart, 
   Search, 
@@ -26,7 +27,9 @@ import {
   Send,
   MoreVertical,
   Home,
-  Camera
+  Camera,
+  Bell,
+  Mail
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -297,6 +300,17 @@ export default function FeedPage() {
 
           if (updateError) throw updateError;
         }
+
+        // Create notification for prompt owner (if not liking own post)
+        if (promptUserId !== user.id) {
+          await supabase.rpc('create_notification', {
+            recipient_id: promptUserId,
+            notification_type: 'like',
+            notification_title: 'New Like',
+            notification_message: `${user.username} liked your prompt`,
+            entity_id: promptId
+          });
+        }
       }
 
       // Update local state
@@ -453,6 +467,14 @@ export default function FeedPage() {
           <h1 className="text-xl font-bold text-white">PinPrompt</h1>
         </div>
         <div className="flex items-center space-x-2">
+          <NotificationBell user={user} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/messages')}
+          >
+            <Mail className="h-5 w-5" />
+          </Button>
           <div className="relative">
             <Button
               variant="ghost"
@@ -577,6 +599,22 @@ export default function FeedPage() {
               >
                 <User className="mr-3 h-4 w-4" />
                 Your PinPrompts
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push('/messages')}
+              >
+                <Mail className="mr-3 h-4 w-4" />
+                Messages
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push('/notifications')}
+              >
+                <Bell className="mr-3 h-4 w-4" />
+                Notifications
               </Button>
               <Button
                 variant="ghost"
@@ -915,6 +953,15 @@ export default function FeedPage() {
           >
             <Upload className="h-5 w-5" />
             <span className="text-xs mt-1">Upload</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/messages')}
+            className="flex flex-col items-center p-2 relative"
+          >
+            <Mail className="h-5 w-5" />
+            <span className="text-xs mt-1">Messages</span>
           </Button>
           <Button
             variant="ghost"

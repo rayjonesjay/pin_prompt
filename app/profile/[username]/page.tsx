@@ -172,6 +172,15 @@ export default function UserProfilePage() {
 
         setProfileUser(prev => prev ? { ...prev, followers_count: prev.followers_count + 1 } : null);
         setCurrentUser(prev => prev ? { ...prev, following_count: prev.following_count + 1 } : null);
+
+        // Create notification for the followed user
+        await supabase.rpc('create_notification', {
+          recipient_id: profileUser.id,
+          notification_type: 'follow',
+          notification_title: 'New Follower',
+          notification_message: `${currentUser.username} started following you`,
+          entity_id: currentUser.id
+        });
       }
 
       setIsFollowing(!isFollowing);
@@ -180,6 +189,10 @@ export default function UserProfilePage() {
     } finally {
       setFollowLoading(false);
     }
+  };
+
+  const handleMessage = () => {
+    router.push('/messages');
   };
 
   if (loading) {
@@ -294,7 +307,12 @@ export default function UserProfilePage() {
                       </>
                     )}
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={handleMessage}
+                  >
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Message
                   </Button>
