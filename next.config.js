@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  trailingSlash: true,
+  trailingSlash: false,
   // Remove output: 'export' to allow dynamic routes
 };
 
