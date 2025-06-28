@@ -10,7 +10,7 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md bg-white border-gray-200">
         <CardContent className="p-8 text-center">
           {/* 404 Illustration */}
           <div className="mb-8">
@@ -32,7 +32,7 @@ export default function NotFound() {
           <div className="space-y-3">
             <Button 
               onClick={() => router.push('/feed')}
-              className="w-full"
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white"
             >
               <Home className="mr-2 h-4 w-4" />
               Go to Feed

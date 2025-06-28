@@ -165,14 +165,14 @@ export default function UploadPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4">
+    <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -180,18 +180,19 @@ export default function UploadPage() {
             <Button
               variant="ghost"
               onClick={() => router.push('/feed')}
+              className="text-gray-600 hover:text-teal-600"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Feed
             </Button>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Upload PinPrompt</h1>
-          <p className="text-gray-300 mt-2 text-sm md:text-base">Share your AI-generated content with the community</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Upload PinPrompt</h1>
+          <p className="text-gray-600 mt-2 text-sm md:text-base">Share your AI-generated content with the community</p>
         </div>
 
-        <Card className="bg-gray-800 border-gray-700 shadow-xl">
+        <Card className="bg-white border-gray-200 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center text-white text-lg md:text-xl">
+            <CardTitle className="flex items-center text-gray-900 text-lg md:text-xl">
               <Upload className="mr-2 h-5 w-5" />
               Create New PinPrompt
             </CardTitle>
@@ -200,7 +201,7 @@ export default function UploadPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Prompt Text */}
               <div className="space-y-2">
-                <Label htmlFor="prompt" className="text-gray-200 font-medium">Prompt *</Label>
+                <Label htmlFor="prompt" className="text-gray-700 font-medium">Prompt *</Label>
                 <Textarea
                   id="prompt"
                   placeholder="Enter the prompt you used to generate the content..."
@@ -208,13 +209,13 @@ export default function UploadPage() {
                   onChange={(e) => setPromptText(e.target.value)}
                   required
                   rows={4}
-                  className="resize-none bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-teal-500 focus:border-teal-500"
+                  className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
 
               {/* Output Type */}
               <div className="space-y-2">
-                <Label className="text-gray-200 font-medium">Output Type *</Label>
+                <Label className="text-gray-700 font-medium">Output Type *</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {[
                     { type: 'image' as const, icon: Image, label: 'Image' },
@@ -230,7 +231,7 @@ export default function UploadPage() {
                       className={`flex flex-col items-center p-3 md:p-4 h-auto ${
                         outputType === type 
                           ? 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600' 
-                          : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
                       }`}
                     >
                       <Icon className="h-5 w-5 md:h-6 md:w-6 mb-2" />
@@ -242,27 +243,27 @@ export default function UploadPage() {
 
               {/* LLM Model */}
               <div className="space-y-2">
-                <Label htmlFor="model" className="text-gray-200 font-medium">LLM Model Used *</Label>
+                <Label htmlFor="model" className="text-gray-700 font-medium">LLM Model Used *</Label>
                 {loadingModels ? (
                   <div className="flex items-center justify-center p-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
-                    <span className="ml-2 text-gray-300">Loading models...</span>
+                    <span className="ml-2 text-gray-600">Loading models...</span>
                   </div>
                 ) : (
                   <Select value={llmModel} onValueChange={setLlmModel} required>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white focus:ring-teal-500 focus:border-teal-500">
+                    <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-teal-500 focus:border-teal-500">
                       <SelectValue placeholder="Select the AI model you used" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="bg-white border-gray-300">
                       {filteredModels.map((model) => (
                         <SelectItem 
                           key={model.id} 
                           value={model.name}
-                          className="text-white hover:bg-gray-600 focus:bg-gray-600 data-[highlighted]:bg-gray-600"
+                          className="text-gray-900 hover:bg-teal-50 focus:bg-teal-50 data-[highlighted]:bg-teal-50"
                         >
                           <div className="flex flex-col">
                             <span>{model.name}</span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-gray-500">
                               {model.provider} • {model.category}
                             </span>
                           </div>
@@ -275,7 +276,7 @@ export default function UploadPage() {
 
               {/* Output Content */}
               <div className="space-y-2">
-                <Label className="text-gray-200 font-medium">Output Content *</Label>
+                <Label className="text-gray-700 font-medium">Output Content *</Label>
                 {outputType === 'text' ? (
                   <Textarea
                     placeholder="Paste the text output generated by the AI..."
@@ -283,10 +284,10 @@ export default function UploadPage() {
                     onChange={(e) => setOutputText(e.target.value)}
                     required
                     rows={6}
-                    className="resize-none bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-teal-500 focus:border-teal-500"
+                    className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
                   />
                 ) : (
-                  <div className="border-2 border-dashed border-gray-600 bg-gray-700 rounded-lg p-6 text-center hover:border-teal-400 transition-colors">
+                  <div className="border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-6 text-center hover:border-teal-400 transition-colors">
                     <Input
                       type="file"
                       accept={
@@ -301,11 +302,11 @@ export default function UploadPage() {
                     />
                     <Label htmlFor="file-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center">
-                        <Upload className="h-10 w-10 md:h-12 md:w-12 text-gray-500 mb-4" />
-                        <p className="text-base md:text-lg font-medium text-gray-300">
+                        <Upload className="h-10 w-10 md:h-12 md:w-12 text-gray-400 mb-4" />
+                        <p className="text-base md:text-lg font-medium text-gray-700">
                           Click to upload {outputType}
                         </p>
-                        <p className="text-xs md:text-sm text-gray-400 mt-1">
+                        <p className="text-xs md:text-sm text-gray-500 mt-1">
                           {outputType === 'image' && 'PNG, JPG, GIF up to 10MB'}
                           {outputType === 'video' && 'MP4, MOV up to 50MB'}
                           {outputType === 'audio' && 'MP3, WAV up to 25MB'}
@@ -323,17 +324,17 @@ export default function UploadPage() {
 
               {/* Category */}
               <div className="space-y-2">
-                <Label className="text-gray-200 font-medium">Category (Optional)</Label>
+                <Label className="text-gray-700 font-medium">Category (Optional)</Label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white focus:ring-teal-500 focus:border-teal-500">
+                  <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-teal-500 focus:border-teal-500">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-700 border-gray-600">
+                  <SelectContent className="bg-white border-gray-300">
                     {categories.map((cat) => (
                       <SelectItem 
                         key={cat} 
                         value={cat} 
-                        className="text-white hover:bg-gray-600 focus:bg-gray-600 data-[highlighted]:bg-gray-600"
+                        className="text-gray-900 hover:bg-teal-50 focus:bg-teal-50 data-[highlighted]:bg-teal-50"
                       >
                         {cat.charAt(0).toUpperCase() + cat.slice(1)}
                       </SelectItem>
@@ -343,7 +344,7 @@ export default function UploadPage() {
               </div>
 
               {error && (
-                <div className="text-red-600 text-sm bg-red-900/20 p-3 rounded-md border border-red-800">
+                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
                   {error}
                 </div>
               )}

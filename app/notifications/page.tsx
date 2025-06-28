@@ -195,10 +195,10 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
-          <p className="mt-4 text-gray-300">Loading notifications...</p>
+          <p className="mt-4 text-gray-600">Loading notifications...</p>
         </div>
       </div>
     );
@@ -207,7 +207,7 @@ export default function NotificationsPage() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-4">
         {/* Header */}
         <div className="mb-6">
@@ -215,6 +215,7 @@ export default function NotificationsPage() {
             <Button
               variant="ghost"
               onClick={() => router.push('/feed')}
+              className="text-gray-600 hover:text-teal-600"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Feed
@@ -233,7 +234,7 @@ export default function NotificationsPage() {
           
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white flex items-center">
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center">
                 <Bell className="h-8 w-8 mr-3 text-teal-600" />
                 Notifications
                 {unreadCount > 0 && (
@@ -242,7 +243,7 @@ export default function NotificationsPage() {
                   </Badge>
                 )}
               </h1>
-              <p className="text-gray-300 mt-2">
+              <p className="text-gray-600 mt-2">
                 Stay updated with likes, follows, messages, and comments
               </p>
             </div>
@@ -251,13 +252,13 @@ export default function NotificationsPage() {
 
         {/* Notifications List */}
         {notifications.length === 0 ? (
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-white border-gray-200">
             <CardContent className="p-12 text-center">
-              <Bell className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-medium text-white mb-2">
+              <Bell className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
                 No notifications yet
               </h3>
-              <p className="text-gray-400">
+              <p className="text-gray-500">
                 When someone likes your posts, follows you, or sends a message, you'll see it here
               </p>
             </CardContent>
@@ -267,7 +268,7 @@ export default function NotificationsPage() {
             {notifications.map((notification) => (
               <Card 
                 key={notification.id} 
-                className={`bg-gray-800 border-gray-700 cursor-pointer hover:bg-gray-750 transition-colors ${
+                className={`bg-white border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors ${
                   !notification.is_read ? 'border-l-4 border-l-teal-500' : ''
                 }`}
                 onClick={() => handleNotificationClick(notification)}
@@ -279,7 +280,7 @@ export default function NotificationsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className={`font-medium ${notification.is_read ? 'text-gray-300' : 'text-white'}`}>
+                        <h3 className={`font-medium ${notification.is_read ? 'text-gray-600' : 'text-gray-900'}`}>
                           {notification.title}
                         </h3>
                         <div className="flex items-center space-x-2">
@@ -306,7 +307,7 @@ export default function NotificationsPage() {
                           )}
                         </div>
                       </div>
-                      <p className={`text-sm mt-1 ${notification.is_read ? 'text-gray-400' : 'text-gray-300'}`}>
+                      <p className={`text-sm mt-1 ${notification.is_read ? 'text-gray-500' : 'text-gray-700'}`}>
                         {notification.message}
                       </p>
                       {!notification.is_read && (

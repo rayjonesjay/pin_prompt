@@ -69,7 +69,7 @@ export default function NotificationBell({ user }: { user: User | null }) {
       variant="ghost"
       size="sm"
       onClick={() => router.push('/notifications')}
-      className="relative"
+      className="relative text-gray-600 hover:text-teal-600"
     >
       <Bell className="h-5 w-5" />
       {unreadCount > 0 && (

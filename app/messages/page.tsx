@@ -252,28 +252,29 @@ export default function MessagesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
-          <p className="mt-4 text-gray-300">Loading messages...</p>
+          <p className="mt-4 text-gray-600">Loading messages...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto p-4">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <Button
             variant="ghost"
             onClick={() => router.push('/feed')}
+            className="text-gray-600 hover:text-teal-600"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Feed
           </Button>
-          <h1 className="text-2xl font-bold text-white flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <MessageSquare className="h-6 w-6 mr-2 text-teal-600" />
             Messages
           </h1>
@@ -282,35 +283,35 @@ export default function MessagesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
           {/* Conversations List */}
           <div className="lg:col-span-1">
-            <Card className="bg-gray-800 border-gray-700 h-full">
+            <Card className="bg-white border-gray-200 h-full">
               <CardHeader>
-                <CardTitle className="text-white">Conversations</CardTitle>
+                <CardTitle className="text-gray-900">Conversations</CardTitle>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     placeholder="Search users..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-gray-700 border-gray-600 text-white"
+                    className="pl-10 bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
               </CardHeader>
               <CardContent className="p-0 flex-1 overflow-y-auto">
                 {/* Search Results */}
                 {searchResults.length > 0 && (
-                  <div className="p-4 border-b border-gray-700">
-                    <h3 className="text-sm font-medium text-gray-400 mb-2">Search Results</h3>
+                  <div className="p-4 border-b border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Search Results</h3>
                     {searchResults.map((user) => (
                       <button
                         key={user.id}
                         onClick={() => startConversation(user)}
-                        className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={user.avatar_url} />
-                          <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
+                          <AvatarFallback className="bg-teal-100 text-teal-700">{user.username[0]?.toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <span className="text-white text-sm">@{user.username}</span>
+                        <span className="text-gray-900 text-sm">@{user.username}</span>
                       </button>
                     ))}
                   </div>
@@ -319,9 +320,9 @@ export default function MessagesPage() {
                 {/* Conversations */}
                 {conversations.length === 0 ? (
                   <div className="p-4 text-center">
-                    <MessageSquare className="h-12 w-12 text-gray-600 mx-auto mb-2" />
-                    <p className="text-gray-400 text-sm">No conversations yet</p>
-                    <p className="text-gray-500 text-xs mt-1">Search for users to start messaging</p>
+                    <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No conversations yet</p>
+                    <p className="text-gray-400 text-xs mt-1">Search for users to start messaging</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
@@ -329,27 +330,27 @@ export default function MessagesPage() {
                       <button
                         key={conversation.user.id}
                         onClick={() => setSelectedConversation(conversation.user)}
-                        className={`w-full flex items-center space-x-3 p-4 hover:bg-gray-700 transition-colors ${
-                          selectedConversation?.id === conversation.user.id ? 'bg-gray-700' : ''
+                        className={`w-full flex items-center space-x-3 p-4 hover:bg-gray-50 transition-colors ${
+                          selectedConversation?.id === conversation.user.id ? 'bg-gray-50' : ''
                         }`}
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={conversation.user.avatar_url} />
-                          <AvatarFallback>{conversation.user.username[0]?.toUpperCase()}</AvatarFallback>
+                          <AvatarFallback className="bg-teal-100 text-teal-700">{conversation.user.username[0]?.toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0 text-left">
                           <div className="flex items-center justify-between">
-                            <p className="text-white font-medium truncate">@{conversation.user.username}</p>
+                            <p className="text-gray-900 font-medium truncate">@{conversation.user.username}</p>
                             {conversation.unreadCount > 0 && (
                               <Badge className="bg-teal-600 text-white text-xs">
                                 {conversation.unreadCount}
                               </Badge>
                             )}
                           </div>
-                          <p className="text-gray-400 text-sm truncate">
+                          <p className="text-gray-500 text-sm truncate">
                             {conversation.lastMessage.content}
                           </p>
-                          <p className="text-gray-500 text-xs">
+                          <p className="text-gray-400 text-xs">
                             {formatDistanceToNow(new Date(conversation.lastMessage.created_at), { addSuffix: true })}
                           </p>
                         </div>
@@ -363,19 +364,19 @@ export default function MessagesPage() {
 
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-800 border-gray-700 h-full flex flex-col">
+            <Card className="bg-white border-gray-200 h-full flex flex-col">
               {selectedConversation ? (
                 <>
                   {/* Chat Header */}
-                  <CardHeader className="border-b border-gray-700">
+                  <CardHeader className="border-b border-gray-200">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={selectedConversation.avatar_url} />
-                        <AvatarFallback>{selectedConversation.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-teal-100 text-teal-700">{selectedConversation.username[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="text-white font-medium">@{selectedConversation.username}</h3>
-                        <p className="text-gray-400 text-sm">Active now</p>
+                        <h3 className="text-gray-900 font-medium">@{selectedConversation.username}</h3>
+                        <p className="text-gray-500 text-sm">Active now</p>
                       </div>
                     </div>
                   </CardHeader>
@@ -391,12 +392,12 @@ export default function MessagesPage() {
                           className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                             message.sender_id === currentUser?.id
                               ? 'bg-teal-600 text-white'
-                              : 'bg-gray-700 text-gray-200'
+                              : 'bg-gray-100 text-gray-900'
                           }`}
                         >
                           <p className="text-sm">{message.content}</p>
                           <p className={`text-xs mt-1 ${
-                            message.sender_id === currentUser?.id ? 'text-teal-200' : 'text-gray-400'
+                            message.sender_id === currentUser?.id ? 'text-teal-200' : 'text-gray-500'
                           }`}>
                             {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
                           </p>
@@ -407,14 +408,14 @@ export default function MessagesPage() {
                   </CardContent>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t border-gray-700">
+                  <div className="p-4 border-t border-gray-200">
                     <div className="flex space-x-2">
                       <Input
                         placeholder="Type a message..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        className="flex-1 bg-gray-700 border-gray-600 text-white"
+                        className="flex-1 bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                       />
                       <Button
                         onClick={sendMessage}
@@ -433,9 +434,9 @@ export default function MessagesPage() {
               ) : (
                 <CardContent className="flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <MessageSquare className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-medium text-white mb-2">Select a conversation</h3>
-                    <p className="text-gray-400">Choose a conversation from the list or search for users to start messaging</p>
+                    <MessageSquare className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-xl font-medium text-gray-900 mb-2">Select a conversation</h3>
+                    <p className="text-gray-500">Choose a conversation from the list or search for users to start messaging</p>
                   </div>
                 </CardContent>
               )}

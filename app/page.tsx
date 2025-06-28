@@ -85,9 +85,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-900">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-white">
       {/* Left Side - Brand and Features - Desktop Split Screen */}
-      <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
+      <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-gray-50 text-gray-900 p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
@@ -101,23 +101,23 @@ export default function LandingPage() {
           <div className="mb-12 lg:mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-teal-400">Creations</span>
+              <span className="text-teal-600">Creations</span>
             </h2>
-            <p className="text-lg lg:text-xl text-slate-300 mb-8 lg:mb-12 leading-relaxed">
+            <p className="text-lg lg:text-xl text-gray-600 mb-8 lg:mb-12 leading-relaxed">
               Discover, share, and learn from AI-generated content and the prompts that created them.<br className="hidden lg:block" />
               Join our community of creators pushing the boundaries of AI creativity.
             </p>
 
             {/* Slogan Section */}
-            <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12 shadow-sm">
               <div className="flex items-center mb-4">
-                <Sparkles className="h-6 w-6 text-teal-400 mr-3" />
-                <h3 className="text-teal-400 font-semibold text-lg lg:text-xl">Our Mission</h3>
+                <Sparkles className="h-6 w-6 text-teal-600 mr-3" />
+                <h3 className="text-teal-600 font-semibold text-lg lg:text-xl">Our Mission</h3>
               </div>
-              <p className="text-2xl lg:text-3xl font-bold text-white leading-tight">
+              <p className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
                 Prompt. Generate. Share. Inspire.
               </p>
-              <p className="text-slate-300 mt-3 text-sm lg:text-base">
+              <p className="text-gray-600 mt-3 text-sm lg:text-base">
                 The complete cycle of AI creativity in one platform
               </p>
             </div>
@@ -125,25 +125,25 @@ export default function LandingPage() {
         </div>
 
         {/* Footer - Credits Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-slate-400">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-gray-500">
           <div className="flex items-center space-x-2">
             <span className="text-sm">Built on</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-teal-400 hover:text-teal-300 transition-colors font-medium flex items-center space-x-1"
+              className="text-teal-600 hover:text-teal-700 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
-          <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
+          <div className="w-1 h-1 bg-gray-400 rounded-full hidden sm:block"></div>
           <a 
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-teal-400 transition-colors"
+            className="flex items-center space-x-2 text-gray-500 hover:text-teal-600 transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -152,13 +152,13 @@ export default function LandingPage() {
       </div>
 
       {/* Right Side - Authentication - Desktop Split Screen */}
-      <div className="w-full lg:w-1/2 lg:ml-auto bg-gray-900 flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen">
+      <div className="w-full lg:w-1/2 lg:ml-auto bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen">
         <div className="w-full max-w-md">
-          <Card className="bg-gray-800 border-gray-700 shadow-xl">
+          <Card className="bg-white border border-gray-200 shadow-xl">
             <CardContent className="p-6 lg:p-8">
               <div className="text-center mb-6 lg:mb-8">
-                <h2 className="text-xl lg:text-2xl font-bold text-white mb-2">Welcome</h2>
-                <p className="text-gray-400 text-sm lg:text-base">
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
+                <p className="text-gray-600 text-sm lg:text-base">
                   Sign in to your account or create a new one
                 </p>
               </div>
@@ -166,7 +166,7 @@ export default function LandingPage() {
               <form onSubmit={handleAuth} className="space-y-4">
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-gray-300 text-sm font-medium">Username</Label>
+                    <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
                     <Input
                       id="username"
                       type="text"
@@ -174,13 +174,13 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
+                      className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                     />
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-300 text-sm font-medium">
+                  <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
                     {isSignUp ? 'Email' : 'Email or Username'}
                   </Label>
                   <Input
@@ -190,12 +190,12 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-300 text-sm font-medium">Password</Label>
+                  <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -204,12 +204,12 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
                 {error && (
-                  <div className="text-red-400 text-sm text-center bg-red-900/20 p-3 rounded-md border border-red-800">
+                  <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
                     {error}
                   </div>
                 )}
@@ -231,13 +231,13 @@ export default function LandingPage() {
               </form>
 
               {/* Tab Buttons - Moved to bottom */}
-              <div className="flex mt-6 bg-gray-700 rounded-lg p-1">
+              <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setIsSignUp(false)}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                     !isSignUp 
-                      ? 'bg-gray-800 text-white shadow-sm' 
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   Sign In
@@ -246,8 +246,8 @@ export default function LandingPage() {
                   onClick={() => setIsSignUp(true)}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                     isSignUp 
-                      ? 'bg-gray-800 text-white shadow-sm' 
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   Sign Up

@@ -454,21 +454,21 @@ export default function FeedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
-          <p className="mt-4 text-gray-300">Loading your feed...</p>
+          <p className="mt-4 text-gray-600">Loading your feed...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
-      <div className="lg:hidden bg-gray-800 border-gray-700 border-b p-4 flex items-center justify-between">
+      <div className="lg:hidden bg-white border-gray-200 border-b p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-white">PinPrompt</h1>
+          <h1 className="text-xl font-bold text-gray-900">PinPrompt</h1>
         </div>
         <div className="flex items-center space-x-2">
           <NotificationBell user={user} />
@@ -476,6 +476,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/messages')}
+            className="text-gray-600 hover:text-teal-600"
           >
             <Mail className="h-5 w-5" />
           </Button>
@@ -488,19 +489,19 @@ export default function FeedPage() {
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user?.avatar_url} />
-                <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </Button>
             
             {/* Profile Menu Dropdown */}
             {showProfileMenu && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border-gray-700 border rounded-lg shadow-lg z-50">
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                 <div className="p-4">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="relative">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={user?.avatar_url} />
-                        <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <label className="absolute -bottom-1 -right-1 bg-teal-600 rounded-full p-1 cursor-pointer hover:bg-teal-700 transition-colors">
                         <Camera className="h-3 w-3 text-white" />
@@ -521,8 +522,8 @@ export default function FeedPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-white">@{user?.username}</p>
-                      <p className="text-sm text-gray-400">
+                      <p className="font-medium text-gray-900">@{user?.username}</p>
+                      <p className="text-sm text-gray-500">
                         {user?.followers_count} followers
                       </p>
                     </div>
@@ -544,19 +545,19 @@ export default function FeedPage() {
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <div className="hidden lg:block fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-gray-700 border-r">
+        <div className="hidden lg:block fixed inset-y-0 left-0 z-50 w-64 bg-white border-gray-200 border-r shadow-sm">
           <div className="flex flex-col h-full">
             {/* Sidebar Header */}
-            <div className="p-6 border-gray-700 border-b">
+            <div className="p-6 border-gray-200 border-b">
               <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-white">PinPrompt</h1>
+                <h1 className="text-2xl font-bold text-gray-900">PinPrompt</h1>
               </div>
               {user && (
                 <div className="mt-4 flex items-center space-x-3">
                   <div className="relative">
                     <Avatar>
                       <AvatarImage src={user.avatar_url} />
-                      <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="bg-teal-100 text-teal-700">{user.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <label className="absolute -bottom-1 -right-1 bg-teal-600 rounded-full p-1 cursor-pointer hover:bg-teal-700 transition-colors">
                       <Camera className="h-3 w-3 text-white" />
@@ -577,8 +578,8 @@ export default function FeedPage() {
                     )}
                   </div>
                   <div>
-                    <p className="font-medium text-white">@{user.username}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="font-medium text-gray-900">@{user.username}</p>
+                    <p className="text-sm text-gray-500">
                       {user.followers_count} followers
                     </p>
                   </div>
@@ -590,7 +591,7 @@ export default function FeedPage() {
             <nav className="flex-1 p-6 space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
                 onClick={() => router.push('/upload')}
               >
                 <Upload className="mr-3 h-4 w-4" />
@@ -598,7 +599,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
                 onClick={() => router.push('/profile')}
               >
                 <User className="mr-3 h-4 w-4" />
@@ -606,7 +607,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
                 onClick={() => router.push('/messages')}
               >
                 <Mail className="mr-3 h-4 w-4" />
@@ -614,7 +615,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
                 onClick={() => router.push('/notifications')}
               >
                 <Bell className="mr-3 h-4 w-4" />
@@ -622,7 +623,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
                 onClick={() => router.push('/forum')}
               >
                 <MessageSquare className="mr-3 h-4 w-4" />
@@ -631,7 +632,7 @@ export default function FeedPage() {
             </nav>
 
             {/* Logout Button */}
-            <div className="p-6 border-gray-700 border-t">
+            <div className="p-6 border-gray-200 border-t">
               <Button
                 variant="outline"
                 className="w-full"
@@ -655,7 +656,7 @@ export default function FeedPage() {
                   placeholder="Search prompts, categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-800 border-gray-700 text-white"
+                  className="pl-10 bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                 />
               </div>
 
@@ -665,7 +666,7 @@ export default function FeedPage() {
                 <select
                   value={modelFilter}
                   onChange={(e) => setModelFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-md bg-gray-800 border-gray-700 text-white"
+                  className="w-full pl-10 pr-4 py-2 border rounded-md bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                 >
                   <option value="">All Models</option>
                   {availableModels.map((model) => (
@@ -681,7 +682,7 @@ export default function FeedPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                  className={sortBy === 'recent' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
                 >
                   Recent
                 </Button>
@@ -689,7 +690,7 @@ export default function FeedPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                  className={sortBy === 'trending' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -698,7 +699,7 @@ export default function FeedPage() {
                   variant={sortBy === 'following' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('following')}
-                  className={sortBy === 'following' ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                  className={sortBy === 'following' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
                 >
                   Following
                 </Button>
@@ -714,24 +715,24 @@ export default function FeedPage() {
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
                   'border-l-yellow-500'
-                } bg-gray-800 border-gray-700`}>
+                } bg-white border-gray-200`}>
                   <CardContent className="p-6">
                     {/* User Info */}
                     <div className="flex items-center space-x-3 mb-4">
                       <Avatar className="h-10 w-10 ring-2 ring-teal-200">
                         <AvatarImage src={prompt.users.avatar_url} />
-                        <AvatarFallback className="bg-gradient-to-br from-teal-400 to-cyan-500 text-white">
+                        <AvatarFallback className="bg-teal-100 text-teal-700">
                           {prompt.users.username[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className="font-medium text-white hover:text-teal-400 transition-colors"
+                          className="font-medium text-gray-900 hover:text-teal-600 transition-colors"
                         >
                           @{prompt.users.username}
                         </button>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500">
                           {formatDistanceToNow(new Date(prompt.created_at), { addSuffix: true })}
                         </p>
                       </div>
@@ -753,8 +754,8 @@ export default function FeedPage() {
 
                     {/* Prompt Text */}
                     <div className="mb-4">
-                      <h3 className="font-medium text-white mb-2">Prompt:</h3>
-                      <p className="text-gray-300 bg-gray-700 p-3 rounded-lg border-l-2 border-teal-400">
+                      <h3 className="font-medium text-gray-900 mb-2">Prompt:</h3>
+                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg border-l-2 border-teal-400">
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -762,7 +763,7 @@ export default function FeedPage() {
                     {/* Output */}
                     {prompt.output_url && (
                       <div className="mb-4">
-                        <h3 className="font-medium text-white mb-2">Output:</h3>
+                        <h3 className="font-medium text-gray-900 mb-2">Output:</h3>
                         {prompt.output_type === 'image' && (
                           <img
                             src={prompt.output_url}
@@ -782,14 +783,14 @@ export default function FeedPage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className="bg-gray-700 p-4 rounded-lg border border-gray-200">
-                            <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <pre className="whitespace-pre-wrap text-sm text-gray-700">
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className="bg-gray-700 p-4 rounded-lg border border-gray-200">
+                          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.
@@ -801,12 +802,12 @@ export default function FeedPage() {
 
                     {/* Model Info */}
                     <div className="mb-4">
-                      <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
+                      <Badge variant="outline" className="text-xs border-gray-300 text-gray-600">
                         {prompt.llm_model}
                       </Badge>
                     </div>
 
-                    <Separator className="my-4 bg-gray-700" />
+                    <Separator className="my-4 bg-gray-200" />
 
                     {/* Actions */}
                     <div className="flex items-center justify-between">
@@ -819,7 +820,7 @@ export default function FeedPage() {
                           className={`${
                             prompt.is_liked 
                               ? 'text-red-500 hover:text-red-600' 
-                              : 'text-gray-400 hover:text-red-400'
+                              : 'text-gray-500 hover:text-red-400'
                           } transition-colors`}
                         >
                           {likingPrompts.has(prompt.id) ? (
@@ -834,7 +835,7 @@ export default function FeedPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleComments(prompt.id)}
-                          className="text-gray-400 hover:text-blue-400 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                         >
                           <MessageSquare className="mr-1 h-4 w-4" />
                           {prompt.comments_count || 0}
@@ -842,7 +843,7 @@ export default function FeedPage() {
                       </div>
                       
                       {user?.id === prompt.user_id && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
                           Your post
                         </Badge>
                       )}
@@ -851,20 +852,20 @@ export default function FeedPage() {
                     {/* Comments Section */}
                     {expandedComments.has(prompt.id) && (
                       <div className="mt-4 space-y-4">
-                        <Separator className="bg-gray-700" />
+                        <Separator className="bg-gray-200" />
                         
                         {/* Comment Input */}
                         <div className="flex space-x-3">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={user?.avatar_url} />
-                            <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 flex space-x-2">
                             <Textarea
                               placeholder="Write a comment..."
                               value={newComments[prompt.id] || ''}
                               onChange={(e) => setNewComments(prev => ({ ...prev, [prompt.id]: e.target.value }))}
-                              className="flex-1 min-h-[80px] bg-gray-700 border-gray-600 text-white"
+                              className="flex-1 min-h-[80px] bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
                               rows={2}
                             />
                             <Button
@@ -884,19 +885,19 @@ export default function FeedPage() {
                             <div key={comment.id} className="flex space-x-3">
                               <Avatar className="h-8 w-8">
                                 <AvatarImage src={comment.users.avatar_url} />
-                                <AvatarFallback>{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
+                                <AvatarFallback className="bg-teal-100 text-teal-700">{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
-                                <div className="bg-gray-700 rounded-lg p-3">
+                                <div className="bg-gray-50 rounded-lg p-3">
                                   <div className="flex items-center space-x-2 mb-1">
-                                    <span className="font-medium text-sm text-white">
+                                    <span className="font-medium text-sm text-gray-900">
                                       @{comment.users.username}
                                     </span>
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-gray-500">
                                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                                     </span>
                                   </div>
-                                  <p className="text-sm text-gray-300">
+                                  <p className="text-sm text-gray-700">
                                     {comment.content}
                                   </p>
                                 </div>
@@ -913,19 +914,19 @@ export default function FeedPage() {
               {loadingMore && (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                  <p className="mt-2 text-gray-400">Loading more prompts...</p>
+                  <p className="mt-2 text-gray-600">Loading more prompts...</p>
                 </div>
               )}
 
               {!hasMore && prompts.length > 0 && (
                 <div className="text-center py-8">
-                  <p className="text-gray-400">You've reached the end!</p>
+                  <p className="text-gray-500">You've reached the end!</p>
                 </div>
               )}
 
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
-                  <p className="text-gray-400 mb-4">No prompts found.</p>
+                  <p className="text-gray-500 mb-4">No prompts found.</p>
                   <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
@@ -938,13 +939,13 @@ export default function FeedPage() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-gray-700 border-t">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-gray-200 border-t shadow-lg">
         <div className="flex items-center justify-around py-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push('/feed')}
-            className="flex flex-col items-center p-2"
+            className="flex flex-col items-center p-2 text-teal-600"
           >
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Feed</span>
@@ -953,7 +954,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/upload')}
-            className="flex flex-col items-center p-2"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
           >
             <Upload className="h-5 w-5" />
             <span className="text-xs mt-1">Upload</span>
@@ -962,7 +963,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/messages')}
-            className="flex flex-col items-center p-2 relative"
+            className="flex flex-col items-center p-2 relative text-gray-600 hover:text-teal-600"
           >
             <Mail className="h-5 w-5" />
             <span className="text-xs mt-1">Messages</span>
@@ -971,7 +972,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/profile')}
-            className="flex flex-col items-center p-2"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
           >
             <User className="h-5 w-5" />
             <span className="text-xs mt-1">Profile</span>
@@ -980,7 +981,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/forum')}
-            className="flex flex-col items-center p-2"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
           >
             <MessageSquare className="h-5 w-5" />
             <span className="text-xs mt-1">Forum</span>
