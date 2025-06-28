@@ -126,20 +126,37 @@ export default function FeedPage() {
   }, [user, sortBy]);
 
   const checkUser = async () => {
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) {
+    try {
+      const { data: { user: authUser }, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Auth error:', error);
+        router.push('/');
+        return;
+      }
+      
+      if (!authUser) {
+        router.push('/');
+        return;
+      }
+
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .single();
+
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        router.push('/');
+        return;
+      }
+
+      if (userProfile) {
+        setUser(userProfile);
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
       router.push('/');
-      return;
-    }
-
-    const { data: userProfile } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
-
-    if (userProfile) {
-      setUser(userProfile);
     }
   };
 
@@ -155,84 +172,88 @@ export default function FeedPage() {
     setLoading(offset === 0);
     setLoadingMore(offset > 0);
 
-    let query = supabase
-      .from('prompts')
-      .select(`
-        *,
-        users (
-          id,
-          username,
-          avatar_url,
-          followers_count,
-          following_count
-        )
-      `)
-      .range(offset, offset + 9);
+    try {
+      let query = supabase
+        .from('prompts')
+        .select(`
+          *,
+          users (
+            id,
+            username,
+            avatar_url,
+            followers_count,
+            following_count
+          )
+        `)
+        .range(offset, offset + 9);
 
-    // Apply search filter
-    if (searchQuery) {
-      query = query.or(`prompt_text.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
-    }
+      // Apply search filter
+      if (searchQuery) {
+        query = query.or(`prompt_text.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+      }
 
-    // Apply model filter
-    if (modelFilter) {
-      query = query.ilike('llm_model', `%${modelFilter}%`);
-    }
+      // Apply model filter
+      if (modelFilter) {
+        query = query.ilike('llm_model', `%${modelFilter}%`);
+      }
 
-    // Apply sorting
-    switch (sortBy) {
-      case 'trending':
-        query = query.order('likes_count', { ascending: false });
-        break;
-      case 'following':
-        // This would need a more complex query with joins for followed users
-        query = query.order('created_at', { ascending: false });
-        break;
-      default:
-        query = query.order('created_at', { ascending: false });
-    }
+      // Apply sorting
+      switch (sortBy) {
+        case 'trending':
+          query = query.order('likes_count', { ascending: false });
+          break;
+        case 'following':
+          // This would need a more complex query with joins for followed users
+          query = query.order('created_at', { ascending: false });
+          break;
+        default:
+          query = query.order('created_at', { ascending: false });
+      }
 
-    const { data, error } = await query;
+      const { data, error } = await query;
 
-    if (error) {
-      console.error('Error fetching prompts:', error);
-      return;
-    }
+      if (error) {
+        console.error('Error fetching prompts:', error);
+        return;
+      }
 
-    // Check which prompts are liked by current user
-    if (data && data.length > 0) {
-      const promptIds = data.map(p => p.id);
-      const { data: likes } = await supabase
-        .from('likes')
-        .select('prompt_id')
-        .eq('user_id', user.id)
-        .in('prompt_id', promptIds);
+      // Check which prompts are liked by current user
+      if (data && data.length > 0) {
+        const promptIds = data.map(p => p.id);
+        const { data: likes } = await supabase
+          .from('likes')
+          .select('prompt_id')
+          .eq('user_id', user.id)
+          .in('prompt_id', promptIds);
 
-      const likedPromptIds = new Set(likes?.map(l => l.prompt_id) || []);
-      
-      const promptsWithLikes = data.map(prompt => ({
-        ...prompt,
-        is_liked: likedPromptIds.has(prompt.id),
-        comments: [],
-        comments_count: 0
-      }));
+        const likedPromptIds = new Set(likes?.map(l => l.prompt_id) || []);
+        
+        const promptsWithLikes = data.map(prompt => ({
+          ...prompt,
+          is_liked: likedPromptIds.has(prompt.id),
+          comments: [],
+          comments_count: 0
+        }));
 
-      if (offset === 0) {
-        setPrompts(promptsWithLikes);
+        if (offset === 0) {
+          setPrompts(promptsWithLikes);
+        } else {
+          setPrompts(prev => [...prev, ...promptsWithLikes]);
+        }
+
+        setHasMore(data.length === 10);
       } else {
-        setPrompts(prev => [...prev, ...promptsWithLikes]);
+        if (offset === 0) {
+          setPrompts([]);
+        }
+        setHasMore(false);
       }
-
-      setHasMore(data.length === 10);
-    } else {
-      if (offset === 0) {
-        setPrompts([]);
-      }
-      setHasMore(false);
+    } catch (error) {
+      console.error('Error in fetchPrompts:', error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
     }
-
-    setLoading(false);
-    setLoadingMore(false);
   };
 
   const handleLike = async (promptId: string, isLiked: boolean, promptUserId: string) => {
@@ -251,16 +272,20 @@ export default function FeedPage() {
 
         if (deleteError) throw deleteError;
 
-        const { error: updateError } = await supabase.rpc('decrement_likes', {
+        // Try to use the RPC function first
+        const { error: rpcError } = await supabase.rpc('decrement_likes', {
           prompt_id: promptId
         });
 
-        if (updateError) {
-          // Fallback to direct update if RPC doesn't exist
-          await supabase
+        if (rpcError) {
+          // Fallback to direct update if RPC fails
+          console.warn('RPC decrement_likes failed, using direct update:', rpcError);
+          const { error: updateError } = await supabase
             .from('prompts')
-            .update({ likes_count: supabase.raw('likes_count - 1') })
+            .update({ likes_count: Math.max(0, prompts.find(p => p.id === promptId)?.likes_count - 1 || 0) })
             .eq('id', promptId);
+
+          if (updateError) throw updateError;
         }
       } else {
         // Like
@@ -270,16 +295,20 @@ export default function FeedPage() {
 
         if (insertError) throw insertError;
 
-        const { error: updateError } = await supabase.rpc('increment_likes', {
+        // Try to use the RPC function first
+        const { error: rpcError } = await supabase.rpc('increment_likes', {
           prompt_id: promptId
         });
 
-        if (updateError) {
-          // Fallback to direct update if RPC doesn't exist
-          await supabase
+        if (rpcError) {
+          // Fallback to direct update if RPC fails
+          console.warn('RPC increment_likes failed, using direct update:', rpcError);
+          const { error: updateError } = await supabase
             .from('prompts')
-            .update({ likes_count: supabase.raw('likes_count + 1') })
+            .update({ likes_count: (prompts.find(p => p.id === promptId)?.likes_count || 0) + 1 })
             .eq('id', promptId);
+
+          if (updateError) throw updateError;
         }
       }
 
