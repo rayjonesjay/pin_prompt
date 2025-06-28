@@ -21,7 +21,8 @@ import {
   Reply,
   ThumbsUp,
   Moon,
-  Sun
+  Sun,
+  LogIn
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -57,6 +58,7 @@ export default function ForumPage() {
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostCategory, setNewPostCategory] = useState('general');
   const [darkMode, setDarkMode] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   const categories = [
@@ -73,10 +75,8 @@ export default function ForumPage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchPosts();
-    }
-  }, [user, searchQuery, selectedCategory, sortBy]);
+    fetchPosts();
+  }, [searchQuery, selectedCategory, sortBy]);
 
   // Dark mode effect
   useEffect(() => {
@@ -89,118 +89,37 @@ export default function ForumPage() {
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) {
-      router.push('/');
-      return;
-    }
+    
+    if (authUser) {
+      setIsAuthenticated(true);
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('id, username, avatar_url')
+        .eq('id', authUser.id)
+        .single();
 
-    const { data: userProfile } = await supabase
-      .from('users')
-      .select('id, username, avatar_url')
-      .eq('id', authUser.id)
-      .single();
-
-    if (userProfile) {
-      setUser(userProfile);
+      if (userProfile) {
+        setUser(userProfile);
+      }
+    } else {
+      setIsAuthenticated(false);
     }
   };
 
   const fetchPosts = async () => {
-    // For now, we'll create some mock data since we don't have forum tables yet
-    // In a real implementation, you'd create forum_posts and forum_replies tables
-    const mockPosts: ForumPost[] = [
-      {
-        id: '1',
-        title: 'Best practices for image generation prompts?',
-        content: 'I\'m struggling to get consistent results with DALL-E. What are your go-to techniques for creating detailed, high-quality image prompts?',
-        category: 'prompt-engineering',
-        user_id: user?.id || '',
-        replies_count: 12,
-        likes_count: 8,
-        is_pinned: false,
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        users: {
-          id: user?.id || '',
-          username: 'ai_artist_pro',
-          avatar_url: undefined
-        }
-      },
-      {
-        id: '2',
-        title: 'Welcome to PinPrompt Forum! 📌',
-        content: 'Welcome to our community forum! This is a place to discuss AI, share prompt engineering tips, get feedback on your prompts, and connect with fellow creators. Please be respectful and helpful to one another.',
-        category: 'announcements',
-        user_id: user?.id || '',
-        replies_count: 25,
-        likes_count: 45,
-        is_pinned: true,
-        created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        users: {
-          id: user?.id || '',
-          username: 'pinprompt_team',
-          avatar_url: undefined
-        }
-      },
-      {
-        id: '3',
-        title: 'GPT-4 vs Claude for creative writing prompts',
-        content: 'Has anyone compared the creative writing capabilities of GPT-4 and Claude? I\'m curious about which one produces more engaging narratives.',
-        category: 'llm-discussions',
-        user_id: user?.id || '',
-        replies_count: 7,
-        likes_count: 15,
-        is_pinned: false,
-        created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-        users: {
-          id: user?.id || '',
-          username: 'story_crafter',
-          avatar_url: undefined
-        }
-      },
-      {
-        id: '4',
-        title: 'Feedback on my landscape generation prompt',
-        content: 'I\'ve been working on this prompt for generating fantasy landscapes: "A mystical forest clearing at dawn, ancient stone ruins covered in glowing moss, ethereal mist, cinematic lighting, highly detailed, 8k resolution". Any suggestions for improvement?',
-        category: 'prompt-feedback',
-        user_id: user?.id || '',
-        replies_count: 3,
-        likes_count: 6,
-        is_pinned: false,
-        created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-        users: {
-          id: user?.id || '',
-          username: 'landscape_lover',
-          avatar_url: undefined
-        }
-      }
-    ];
-
+    // Since we don't have forum tables yet, we'll show empty state
+    // In a real implementation, you'd query forum_posts table
     setLoading(false);
-    setPosts(mockPosts);
+    setPosts([]);
   };
 
   const handleCreatePost = async () => {
-    if (!newPostTitle.trim() || !newPostContent.trim()) return;
+    if (!newPostTitle.trim() || !newPostContent.trim() || !isAuthenticated) return;
 
     // In a real implementation, you'd save to the database
-    const newPost: ForumPost = {
-      id: Date.now().toString(),
-      title: newPostTitle,
-      content: newPostContent,
-      category: newPostCategory,
-      user_id: user?.id || '',
-      replies_count: 0,
-      likes_count: 0,
-      is_pinned: false,
-      created_at: new Date().toISOString(),
-      users: {
-        id: user?.id || '',
-        username: user?.username || 'anonymous',
-        avatar_url: user?.avatar_url
-      }
-    };
-
-    setPosts(prev => [newPost, ...prev]);
+    // For now, we'll just show a message that forum functionality needs database setup
+    alert('Forum functionality requires database setup. Please create forum_posts and forum_replies tables.');
+    
     setNewPostTitle('');
     setNewPostContent('');
     setNewPostCategory('general');
@@ -231,13 +150,24 @@ export default function ForumPage() {
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Feed
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDarkMode(!darkMode)}
+              >
+                {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+              {!isAuthenticated && (
+                <Button
+                  onClick={() => router.push('/')}
+                  className="bg-gradient-to-r from-green-600 to-green-700"
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign In
+                </Button>
+              )}
+            </div>
           </div>
           
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -249,15 +179,22 @@ export default function ForumPage() {
               <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Discuss AI, share tips, and connect with fellow creators
               </p>
+              {!isAuthenticated && (
+                <p className={`text-sm ${darkMode ? 'text-yellow-400' : 'text-orange-600'} mt-2`}>
+                  Sign in to create posts and interact with the community
+                </p>
+              )}
             </div>
             
-            <Button 
-              onClick={() => setShowCreatePost(true)}
-              className="mt-4 md:mt-0 bg-gradient-to-r from-green-600 to-green-700"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              New Post
-            </Button>
+            {isAuthenticated && (
+              <Button 
+                onClick={() => setShowCreatePost(true)}
+                className="mt-4 md:mt-0 bg-gradient-to-r from-green-600 to-green-700"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                New Post
+              </Button>
+            )}
           </div>
         </div>
 
@@ -297,13 +234,11 @@ export default function ForumPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Active Users</span>
-                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>127</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>0</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Replies</span>
-                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>
-                    {posts.reduce((sum, post) => sum + post.replies_count, 0)}
-                  </span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>0</span>
                 </div>
               </CardContent>
             </Card>
@@ -346,7 +281,7 @@ export default function ForumPage() {
             </div>
 
             {/* Create Post Modal */}
-            {showCreatePost && (
+            {showCreatePost && isAuthenticated && (
               <Card className={`mb-6 border-green-200 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
                 <CardHeader>
                   <CardTitle className={`${darkMode ? 'text-white' : ''}`}>Create New Post</CardTitle>
@@ -396,87 +331,28 @@ export default function ForumPage() {
               </Card>
             )}
 
-            {/* Posts */}
-            <div className="space-y-4">
-              {posts.map((post) => (
-                <Card key={post.id} className={`hover:shadow-lg transition-all duration-300 ${
-                  post.is_pinned ? 'border-yellow-200 bg-gradient-to-r from-yellow-50 to-orange-50' : ''
-                } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-10 w-10 ring-2 ring-green-200">
-                        <AvatarImage src={post.users.avatar_url} />
-                        <AvatarFallback className="bg-gradient-to-br from-green-400 to-blue-500 text-white">
-                          {post.users.username[0]?.toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          {post.is_pinned && (
-                            <Pin className="h-4 w-4 text-yellow-600" />
-                          )}
-                          <h3 className={`font-semibold ${darkMode ? 'text-white hover:text-green-400' : 'text-gray-900 hover:text-green-600'} cursor-pointer transition-colors`}>
-                            {post.title}
-                          </h3>
-                          <Badge 
-                            variant="secondary" 
-                            className={`text-xs ${
-                              post.category === 'announcements' ? 'bg-yellow-100 text-yellow-800' :
-                              post.category === 'prompt-engineering' ? 'bg-purple-100 text-purple-800' :
-                              post.category === 'llm-discussions' ? 'bg-green-100 text-green-800' :
-                              post.category === 'prompt-feedback' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {categories.find(c => c.id === post.category)?.name}
-                          </Badge>
-                        </div>
-                        
-                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 line-clamp-2`}>
-                          {post.content}
-                        </p>
-                        
-                        <div className={`flex items-center justify-between text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                          <div className="flex items-center space-x-4">
-                            <span>by @{post.users.username}</span>
-                            <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
-                          </div>
-                          
-                          <div className="flex items-center space-x-4">
-                            <div className="flex items-center">
-                              <Reply className="h-4 w-4 mr-1" />
-                              {post.replies_count}
-                            </div>
-                            <div className="flex items-center">
-                              <ThumbsUp className="h-4 w-4 mr-1" />
-                              {post.likes_count}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {posts.length === 0 && (
-              <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-                <CardContent className="p-12 text-center">
-                  <MessageSquare className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
-                  <h3 className={`text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
-                    No posts found
-                  </h3>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                    Be the first to start a discussion in this category
-                  </p>
+            {/* Empty State */}
+            <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+              <CardContent className="p-12 text-center">
+                <MessageSquare className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
+                <h3 className={`text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+                  Forum Coming Soon
+                </h3>
+                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+                  The forum feature is being developed. Database tables for forum posts and replies need to be created.
+                </p>
+                {isAuthenticated ? (
                   <Button onClick={() => setShowCreatePost(true)} className="bg-gradient-to-r from-green-600 to-green-700">
                     Create First Post
                   </Button>
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <Button onClick={() => router.push('/')} className="bg-gradient-to-r from-green-600 to-green-700">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In to Participate
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

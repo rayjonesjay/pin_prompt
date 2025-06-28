@@ -10,14 +10,13 @@ import { Separator } from '@/components/ui/separator';
 import { 
   ArrowLeft, 
   Heart, 
-  Edit, 
   Trash2,
-  Settings,
   Calendar,
   Users,
   FileText,
   Moon,
-  Sun
+  Sun,
+  AlertTriangle
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -51,6 +50,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [deletingPrompt, setDeletingPrompt] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -105,8 +106,8 @@ export default function ProfilePage() {
   };
 
   const handleDeletePrompt = async (promptId: string) => {
-    if (!confirm('Are you sure you want to delete this prompt?')) return;
-
+    setDeletingPrompt(promptId);
+    
     try {
       const { error } = await supabase
         .from('prompts')
@@ -116,8 +117,11 @@ export default function ProfilePage() {
       if (error) throw error;
 
       setPrompts(prev => prev.filter(p => p.id !== promptId));
+      setShowDeleteConfirm(null);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setDeletingPrompt(null);
     }
   };
 
@@ -201,11 +205,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-
-              <Button variant="outline" className="flex items-center">
-                <Settings className="h-4 w-4 mr-2" />
-                Edit Profile
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -302,17 +301,43 @@ export default function ProfilePage() {
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleDeletePrompt(prompt.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {showDeleteConfirm === prompt.id ? (
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeletePrompt(prompt.id)}
+                              disabled={deletingPrompt === prompt.id}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              {deletingPrompt === prompt.id ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              ) : (
+                                <>
+                                  <AlertTriangle className="h-4 w-4 mr-1" />
+                                  Confirm Delete
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setShowDeleteConfirm(null)}
+                              disabled={deletingPrompt === prompt.id}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => setShowDeleteConfirm(prompt.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
 

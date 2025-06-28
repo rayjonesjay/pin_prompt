@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,9 @@ import {
   Volume2,
   Moon,
   Sun,
-  Filter
+  Filter,
+  Send,
+  MoreVertical
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -35,6 +38,18 @@ interface User {
   avatar_url?: string;
   followers_count: number;
   following_count: number;
+}
+
+interface Comment {
+  id: string;
+  user_id: string;
+  prompt_id: string;
+  content: string;
+  created_at: string;
+  users: {
+    username: string;
+    avatar_url?: string;
+  };
 }
 
 interface Prompt {
@@ -49,6 +64,8 @@ interface Prompt {
   created_at: string;
   users: User;
   is_liked?: boolean;
+  comments?: Comment[];
+  comments_count?: number;
 }
 
 export default function FeedPage() {
@@ -63,6 +80,9 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [newComments, setNewComments] = useState<Record<string, string>>({});
+  const [submittingComment, setSubmittingComment] = useState<string | null>(null);
   const router = useRouter();
 
   // Debounced search effect
@@ -186,7 +206,9 @@ export default function FeedPage() {
       
       const promptsWithLikes = data.map(prompt => ({
         ...prompt,
-        is_liked: likedPromptIds.has(prompt.id)
+        is_liked: likedPromptIds.has(prompt.id),
+        comments: [],
+        comments_count: 0
       }));
 
       if (offset === 0) {
@@ -252,6 +274,57 @@ export default function FeedPage() {
       ));
     } catch (error) {
       console.error('Error updating like:', error);
+    }
+  };
+
+  const toggleComments = (promptId: string) => {
+    const newExpanded = new Set(expandedComments);
+    if (newExpanded.has(promptId)) {
+      newExpanded.delete(promptId);
+    } else {
+      newExpanded.add(promptId);
+    }
+    setExpandedComments(newExpanded);
+  };
+
+  const handleCommentSubmit = async (promptId: string) => {
+    const content = newComments[promptId]?.trim();
+    if (!content || !user) return;
+
+    setSubmittingComment(promptId);
+    
+    try {
+      // In a real implementation, you'd save to a comments table
+      // For now, we'll just simulate the comment
+      const newComment: Comment = {
+        id: Date.now().toString(),
+        user_id: user.id,
+        prompt_id: promptId,
+        content,
+        created_at: new Date().toISOString(),
+        users: {
+          username: user.username,
+          avatar_url: user.avatar_url
+        }
+      };
+
+      // Update local state
+      setPrompts(prev => prev.map(prompt => 
+        prompt.id === promptId 
+          ? { 
+              ...prompt, 
+              comments: [...(prompt.comments || []), newComment],
+              comments_count: (prompt.comments_count || 0) + 1
+            }
+          : prompt
+      ));
+
+      // Clear the comment input
+      setNewComments(prev => ({ ...prev, [promptId]: '' }));
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    } finally {
+      setSubmittingComment(null);
     }
   };
 
@@ -587,28 +660,100 @@ export default function FeedPage() {
 
                     {/* Actions */}
                     <div className="flex items-center justify-between">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleLike(prompt.id, prompt.is_liked || false, prompt.user_id)}
-                        disabled={user?.id === prompt.user_id}
-                        className={`${
-                          user?.id === prompt.user_id 
-                            ? 'opacity-50 cursor-not-allowed' 
-                            : prompt.is_liked 
-                              ? 'text-red-500 hover:text-red-600' 
-                              : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
-                        } transition-colors`}
-                      >
-                        <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
-                        {prompt.likes_count}
-                      </Button>
+                      <div className="flex items-center space-x-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleLike(prompt.id, prompt.is_liked || false, prompt.user_id)}
+                          disabled={user?.id === prompt.user_id}
+                          className={`${
+                            user?.id === prompt.user_id 
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : prompt.is_liked 
+                                ? 'text-red-500 hover:text-red-600' 
+                                : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
+                          } transition-colors`}
+                        >
+                          <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
+                          {prompt.likes_count}
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleComments(prompt.id)}
+                          className={`${darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-500'} transition-colors`}
+                        >
+                          <MessageSquare className="mr-1 h-4 w-4" />
+                          {prompt.comments_count || 0}
+                        </Button>
+                      </div>
+                      
                       {user?.id === prompt.user_id && (
                         <Badge variant="secondary" className="text-xs">
                           Your post
                         </Badge>
                       )}
                     </div>
+
+                    {/* Comments Section */}
+                    {expandedComments.has(prompt.id) && (
+                      <div className="mt-4 space-y-4">
+                        <Separator className={`${darkMode ? 'bg-gray-700' : ''}`} />
+                        
+                        {/* Comment Input */}
+                        <div className="flex space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={user?.avatar_url} />
+                            <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 flex space-x-2">
+                            <Textarea
+                              placeholder="Write a comment..."
+                              value={newComments[prompt.id] || ''}
+                              onChange={(e) => setNewComments(prev => ({ ...prev, [prompt.id]: e.target.value }))}
+                              className={`flex-1 min-h-[80px] ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                              rows={2}
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => handleCommentSubmit(prompt.id)}
+                              disabled={!newComments[prompt.id]?.trim() || submittingComment === prompt.id}
+                              className="bg-gradient-to-r from-green-600 to-green-700"
+                            >
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Comments List */}
+                        <div className="space-y-3">
+                          {prompt.comments?.map((comment) => (
+                            <div key={comment.id} className="flex space-x-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={comment.users.avatar_url} />
+                                <AvatarFallback>{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-3`}>
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <span className={`font-medium text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                      @{comment.users.username}
+                                    </span>
+                                    <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                                    </span>
+                                  </div>
+                                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    {comment.content}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
