@@ -61,8 +61,39 @@ export default function MessagesPage() {
   useEffect(() => {
     if (currentUser) {
       fetchConversations();
+      
+      // Set up real-time subscription for messages
+      const subscription = supabase
+        .channel('messages')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${currentUser.id}`
+        }, (payload) => {
+          // Add new message to the current conversation if it's open
+          if (selectedConversation && payload.new.sender_id === selectedConversation.id) {
+            fetchMessages();
+          }
+          // Refresh conversations list
+          fetchConversations();
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${currentUser.id}`
+        }, () => {
+          // Refresh conversations when messages are marked as read
+          fetchConversations();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
     }
-  }, [currentUser]);
+  }, [currentUser, selectedConversation]);
 
   useEffect(() => {
     if (selectedConversation && currentUser) {

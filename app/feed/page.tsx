@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import NotificationBell from '@/components/NotificationBell';
+import UnreadMessageCount from '@/components/UnreadMessageCount';
 import { 
   Heart, 
   Search, 
@@ -503,14 +504,17 @@ export default function FeedPage() {
         </div>
         <div className="flex items-center space-x-2">
           <NotificationBell user={user} />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/messages')}
-            className="text-gray-600 hover:text-teal-700"
-          >
-            <Mail className="h-5 w-5" />
-          </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/messages')}
+              className="text-gray-600 hover:text-teal-700"
+            >
+              <Mail className="h-5 w-5" />
+              <UnreadMessageCount user={user} />
+            </Button>
+          </div>
           <div className="relative">
             <Button
               variant="ghost"
@@ -636,14 +640,17 @@ export default function FeedPage() {
                 <User className="mr-3 h-4 w-4" />
                 Your PinPrompts
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
-                onClick={() => router.push('/messages')}
-              >
-                <Mail className="mr-3 h-4 w-4" />
-                Messages
-              </Button>
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
+                  onClick={() => router.push('/messages')}
+                >
+                  <Mail className="mr-3 h-4 w-4" />
+                  Messages
+                  <UnreadMessageCount user={user} />
+                </Button>
+              </div>
               <Button
                 variant="ghost"
                 className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
@@ -978,15 +985,18 @@ export default function FeedPage() {
             <Upload className="h-5 w-5" />
             <span className="text-xs mt-1">Upload</span>
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/messages')}
-            className="flex flex-col items-center p-2 relative text-gray-600 hover:text-teal-700"
-          >
-            <Mail className="h-5 w-5" />
-            <span className="text-xs mt-1">Messages</span>
-          </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/messages')}
+              className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-700"
+            >
+              <Mail className="h-5 w-5" />
+              <span className="text-xs mt-1">Messages</span>
+              <UnreadMessageCount user={user} />
+            </Button>
+          </div>
           <Button
             variant="ghost"
             size="sm"

@@ -20,7 +20,10 @@ import {
   Pin,
   Reply,
   ThumbsUp,
-  LogIn
+  LogIn,
+  Send,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -29,6 +32,15 @@ interface User {
   id: string;
   username: string;
   avatar_url?: string;
+}
+
+interface ForumComment {
+  id: string;
+  user_id: string;
+  post_id: string;
+  content: string;
+  created_at: string;
+  users: User;
 }
 
 interface ForumPost {
@@ -42,6 +54,8 @@ interface ForumPost {
   is_pinned: boolean;
   created_at: string;
   users: User;
+  is_liked?: boolean;
+  comments?: ForumComment[];
 }
 
 export default function ForumPage() {
@@ -57,6 +71,11 @@ export default function ForumPage() {
   const [newPostCategory, setNewPostCategory] = useState('general');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submittingPost, setSubmittingPost] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [newComments, setNewComments] = useState<Record<string, string>>({});
+  const [submittingComment, setSubmittingComment] = useState<string | null>(null);
+  const [likingPosts, setLikingPosts] = useState<Set<string>>(new Set());
+  const [loadingComments, setLoadingComments] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   const categories = [
@@ -129,7 +148,27 @@ export default function ForumPage() {
 
       if (error) throw error;
 
-      setPosts(data || []);
+      // Check which posts are liked by current user
+      if (data && data.length > 0 && user) {
+        const postIds = data.map(p => p.id);
+        const { data: likes } = await supabase
+          .from('forum_likes')
+          .select('post_id')
+          .eq('user_id', user.id)
+          .in('post_id', postIds);
+
+        const likedPostIds = new Set(likes?.map(l => l.post_id) || []);
+        
+        const postsWithLikes = data.map(post => ({
+          ...post,
+          is_liked: likedPostIds.has(post.id),
+          comments: []
+        }));
+
+        setPosts(postsWithLikes);
+      } else {
+        setPosts(data?.map(post => ({ ...post, is_liked: false, comments: [] })) || []);
+      }
     } catch (error) {
       console.error('Error fetching forum posts:', error);
       setPosts([]);
@@ -173,6 +212,193 @@ export default function ForumPage() {
       alert('Error creating post: ' + error.message);
     } finally {
       setSubmittingPost(false);
+    }
+  };
+
+  const handleLike = async (postId: string, isLiked: boolean, postUserId: string) => {
+    if (!user || likingPosts.has(postId)) return;
+
+    setLikingPosts(prev => new Set(prev).add(postId));
+
+    try {
+      if (isLiked) {
+        // Unlike
+        const { error: deleteError } = await supabase
+          .from('forum_likes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('post_id', postId);
+
+        if (deleteError) throw deleteError;
+
+        // Try to use the RPC function first
+        const { error: rpcError } = await supabase.rpc('decrement_forum_likes', {
+          post_id: postId
+        });
+
+        if (rpcError) {
+          console.warn('RPC decrement_forum_likes failed:', rpcError);
+        }
+      } else {
+        // Like
+        const { error: insertError } = await supabase
+          .from('forum_likes')
+          .insert([{ user_id: user.id, post_id: postId }]);
+
+        if (insertError) throw insertError;
+
+        // Try to use the RPC function first
+        const { error: rpcError } = await supabase.rpc('increment_forum_likes', {
+          post_id: postId
+        });
+
+        if (rpcError) {
+          console.warn('RPC increment_forum_likes failed:', rpcError);
+        }
+
+        // Create notification for post owner (if not liking own post)
+        if (postUserId !== user.id) {
+          await supabase.rpc('create_notification', {
+            recipient_id: postUserId,
+            notification_type: 'like',
+            notification_title: 'Forum Post Liked',
+            notification_message: `${user.username} liked your forum post`,
+            entity_id: postId
+          });
+        }
+      }
+
+      // Update local state
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              is_liked: !isLiked,
+              likes_count: isLiked ? Math.max(0, post.likes_count - 1) : post.likes_count + 1
+            }
+          : post
+      ));
+    } catch (error) {
+      console.error('Error updating forum like:', error);
+    } finally {
+      setLikingPosts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(postId);
+        return newSet;
+      });
+    }
+  };
+
+  const toggleComments = async (postId: string) => {
+    const newExpanded = new Set(expandedComments);
+    if (newExpanded.has(postId)) {
+      newExpanded.delete(postId);
+    } else {
+      newExpanded.add(postId);
+      // Load comments if not already loaded
+      const post = posts.find(p => p.id === postId);
+      if (post && (!post.comments || post.comments.length === 0)) {
+        await loadComments(postId);
+      }
+    }
+    setExpandedComments(newExpanded);
+  };
+
+  const loadComments = async (postId: string) => {
+    setLoadingComments(prev => new Set(prev).add(postId));
+    
+    try {
+      const { data, error } = await supabase
+        .from('forum_comments')
+        .select(`
+          *,
+          users (
+            id,
+            username,
+            avatar_url
+          )
+        `)
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { ...post, comments: data || [] }
+          : post
+      ));
+    } catch (error) {
+      console.error('Error loading comments:', error);
+    } finally {
+      setLoadingComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(postId);
+        return newSet;
+      });
+    }
+  };
+
+  const handleCommentSubmit = async (postId: string) => {
+    const content = newComments[postId]?.trim();
+    if (!content || !user) return;
+
+    setSubmittingComment(postId);
+    
+    try {
+      const { data, error } = await supabase
+        .from('forum_comments')
+        .insert([{
+          user_id: user.id,
+          post_id: postId,
+          content
+        }])
+        .select(`
+          *,
+          users (
+            id,
+            username,
+            avatar_url
+          )
+        `)
+        .single();
+
+      if (error) throw error;
+
+      // Increment replies count
+      await supabase.rpc('increment_forum_replies', {
+        post_id: postId
+      });
+
+      // Update local state
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              comments: [...(post.comments || []), data],
+              replies_count: post.replies_count + 1
+            }
+          : post
+      ));
+
+      // Clear the comment input
+      setNewComments(prev => ({ ...prev, [postId]: '' }));
+
+      // Create notification for post owner (if not commenting on own post)
+      const post = posts.find(p => p.id === postId);
+      if (post && post.user_id !== user.id) {
+        await supabase.rpc('create_notification', {
+          recipient_id: post.user_id,
+          notification_type: 'comment',
+          notification_title: 'New Comment',
+          notification_message: `${user.username} commented on your forum post`,
+          entity_id: postId
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    } finally {
+      setSubmittingComment(null);
     }
   };
 
@@ -435,22 +661,119 @@ export default function ForumPage() {
                           <p className="text-gray-700 mb-3 line-clamp-2">
                             {post.content}
                           </p>
-                          <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                             <div className="flex items-center space-x-4">
                               <span>@{post.users.username}</span>
                               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
                             </div>
-                            <div className="flex items-center space-x-4">
-                              <div className="flex items-center space-x-1">
-                                <ThumbsUp className="h-4 w-4" />
-                                <span>{post.likes_count}</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <Reply className="h-4 w-4" />
-                                <span>{post.replies_count}</span>
-                              </div>
-                            </div>
                           </div>
+
+                          {/* Actions */}
+                          <div className="flex items-center space-x-4">
+                            {isAuthenticated && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleLike(post.id, post.is_liked || false, post.user_id)}
+                                disabled={likingPosts.has(post.id)}
+                                className={`${
+                                  post.is_liked 
+                                    ? 'text-blue-600 hover:text-blue-700' 
+                                    : 'text-gray-500 hover:text-blue-500'
+                                } transition-colors`}
+                              >
+                                {likingPosts.has(post.id) ? (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-1"></div>
+                                ) : (
+                                  <ThumbsUp className={`mr-1 h-4 w-4 ${post.is_liked ? 'fill-current' : ''}`} />
+                                )}
+                                {post.likes_count}
+                              </Button>
+                            )}
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleComments(post.id)}
+                              className="text-gray-500 hover:text-green-500 transition-colors"
+                            >
+                              <Reply className="mr-1 h-4 w-4" />
+                              {post.replies_count}
+                              {expandedComments.has(post.id) ? (
+                                <ChevronUp className="ml-1 h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="ml-1 h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+
+                          {/* Comments Section */}
+                          {expandedComments.has(post.id) && (
+                            <div className="mt-4 space-y-4">
+                              <Separator className="bg-gray-200" />
+                              
+                              {/* Comment Input */}
+                              {isAuthenticated && (
+                                <div className="flex space-x-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={user?.avatar_url} />
+                                    <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 flex space-x-2">
+                                    <Textarea
+                                      placeholder="Write a comment..."
+                                      value={newComments[post.id] || ''}
+                                      onChange={(e) => setNewComments(prev => ({ ...prev, [post.id]: e.target.value }))}
+                                      className="flex-1 min-h-[80px] bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                                      rows={2}
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleCommentSubmit(post.id)}
+                                      disabled={!newComments[post.id]?.trim() || submittingComment === post.id}
+                                      className="bg-teal-600 hover:bg-teal-700 text-white"
+                                    >
+                                      <Send className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Comments List */}
+                              {loadingComments.has(post.id) ? (
+                                <div className="text-center py-4">
+                                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600 mx-auto"></div>
+                                  <p className="mt-2 text-gray-500 text-sm">Loading comments...</p>
+                                </div>
+                              ) : (
+                                <div className="space-y-3">
+                                  {post.comments?.map((comment) => (
+                                    <div key={comment.id} className="flex space-x-3">
+                                      <Avatar className="h-8 w-8">
+                                        <AvatarImage src={comment.users.avatar_url} />
+                                        <AvatarFallback className="bg-teal-100 text-teal-700">{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
+                                      </Avatar>
+                                      <div className="flex-1">
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <div className="flex items-center space-x-2 mb-1">
+                                            <span className="font-medium text-sm text-gray-900">
+                                              @{comment.users.username}
+                                            </span>
+                                            <span className="text-xs text-gray-500">
+                                              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                                            </span>
+                                          </div>
+                                          <p className="text-sm text-gray-700">
+                                            {comment.content}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </CardContent>

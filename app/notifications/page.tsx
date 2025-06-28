@@ -61,6 +61,14 @@ export default function NotificationsPage() {
         }, (payload) => {
           setNotifications(prev => [payload.new as Notification, ...prev]);
         })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        }, () => {
+          fetchNotifications();
+        })
         .subscribe();
 
       return () => {
