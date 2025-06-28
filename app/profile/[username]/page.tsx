@@ -227,9 +227,9 @@ export default function UserProfilePage() {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-4 md:p-6">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 md:mb-8 flex items-center justify-between">
           <Button
             variant="ghost"
             onClick={() => router.push('/feed')}
@@ -247,51 +247,62 @@ export default function UserProfilePage() {
           </Button>
         </div>
 
-        {/* Profile Header */}
-        <Card className={`mb-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-lg'} hover-lift`}>
-          <CardContent className="p-8">
-            <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
-              <Avatar className="h-24 w-24 ring-4 ring-orange-200">
-                <AvatarImage src={profileUser.avatar_url} />
-                <AvatarFallback className="text-2xl bg-gradient-to-br from-orange-400 to-red-500 text-white">
-                  {profileUser.username[0]?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1">
-                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
-                  @{profileUser.username}
-                </h1>
-                {profileUser.bio && (
-                  <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-4`}>{profileUser.bio}</p>
-                )}
+        {/* Profile Header - Mobile Optimized */}
+        <Card className={`mb-6 md:mb-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-lg'} hover-lift`}>
+          <CardContent className="p-4 md:p-8">
+            <div className="flex flex-col space-y-4">
+              {/* Avatar and Basic Info */}
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-16 w-16 md:h-24 md:w-24 ring-4 ring-orange-200">
+                  <AvatarImage src={profileUser.avatar_url} />
+                  <AvatarFallback className="text-lg md:text-2xl bg-gradient-to-br from-orange-400 to-red-500 text-white">
+                    {profileUser.username[0]?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 
-                <div className={`flex items-center space-x-6 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-1" />
-                    <span>{profileUser.followers_count} followers</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-1" />
-                    <span>{profileUser.following_count} following</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    <span>Joined {formatDistanceToNow(new Date(profileUser.created_at), { addSuffix: true })}</span>
-                  </div>
+                <div className="flex-1 min-w-0">
+                  <h1 className={`text-xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                    @{profileUser.username}
+                  </h1>
+                  {profileUser.bio && (
+                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm md:text-base mt-1 md:mt-2`}>
+                      {profileUser.bio}
+                    </p>
+                  )}
                 </div>
               </div>
 
+              {/* Stats - Mobile Optimized */}
+              <div className={`flex items-center justify-between text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} pt-2 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center">
+                    <Users className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                    <span>{profileUser.followers_count} followers</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Users className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                    <span>{profileUser.following_count} following</span>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <span className="hidden sm:inline">Joined </span>
+                  <span>{formatDistanceToNow(new Date(profileUser.created_at), { addSuffix: true })}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
               {!isOwnProfile && (
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 pt-2">
                   <Button
                     onClick={handleFollow}
                     disabled={followLoading}
-                    className={`${
+                    className={`flex-1 ${
                       isFollowing 
                         ? 'bg-gray-600 hover:bg-gray-700' 
                         : 'bg-orange-600 hover:bg-orange-700'
                     } text-white`}
+                    size="sm"
                   >
                     {followLoading ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -307,7 +318,7 @@ export default function UserProfilePage() {
                       </>
                     )}
                   </Button>
-                  <Button variant="outline">
+                  <Button variant="outline" size="sm" className="flex-1">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Message
                   </Button>
@@ -315,7 +326,7 @@ export default function UserProfilePage() {
               )}
 
               {isOwnProfile && (
-                <Button onClick={() => router.push('/profile')} variant="outline">
+                <Button onClick={() => router.push('/profile')} variant="outline" size="sm">
                   View Your Profile
                 </Button>
               )}
@@ -323,38 +334,38 @@ export default function UserProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Stats Cards - Mobile Optimized */}
+        <div className="grid grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+            <CardContent className="p-3 md:p-6 text-center">
+              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
                 {prompts.length}
               </div>
-              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>PinPrompts</div>
+              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>PinPrompts</div>
             </CardContent>
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+            <CardContent className="p-3 md:p-6 text-center">
+              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
                 {prompts.reduce((sum, prompt) => sum + prompt.likes_count, 0)}
               </div>
-              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Likes</div>
+              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Likes</div>
             </CardContent>
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+            <CardContent className="p-3 md:p-6 text-center">
+              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
                 {profileUser.followers_count}
               </div>
-              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Followers</div>
+              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Followers</div>
             </CardContent>
           </Card>
         </div>
 
         {/* User's PinPrompts */}
         <div className="mb-8">
-          <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center mb-6`}>
-            <FileText className="h-6 w-6 mr-2" />
+          <h2 className={`text-xl md:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center mb-4 md:mb-6`}>
+            <FileText className="h-5 w-5 md:h-6 md:w-6 mr-2" />
             {isOwnProfile ? 'Your' : `@${profileUser.username}'s`} PinPrompts
           </h2>
 
@@ -366,12 +377,12 @@ export default function UserProfilePage() {
 
           {prompts.length === 0 ? (
             <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-              <CardContent className="p-12 text-center">
-                <FileText className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
-                <h3 className={`text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+              <CardContent className="p-8 md:p-12 text-center">
+                <FileText className={`h-12 w-12 md:h-16 md:w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
+                <h3 className={`text-lg md:text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
                   No PinPrompts yet
                 </h3>
-                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6 text-sm md:text-base`}>
                   {isOwnProfile 
                     ? 'Start sharing your AI-generated content with the community'
                     : `@${profileUser.username} hasn't shared any prompts yet`
@@ -385,32 +396,32 @@ export default function UserProfilePage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {prompts.map((prompt) => (
                 <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
                   prompt.category === 'ai' ? 'border-l-orange-500' :
                   prompt.category === 'programming' ? 'border-l-blue-500' :
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
-                  'border-l-orange-500'
+                  'border-l-yellow-500'
                 } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-sm'}`}>
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 md:p-6">
                     {/* Prompt Header */}
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2 md:space-x-3">
                         <Badge 
                           variant="secondary" 
-                          className={`${
+                          className={`text-xs ${
                             prompt.category === 'ai' ? 'bg-orange-100 text-orange-800' :
                             prompt.category === 'programming' ? 'bg-blue-100 text-blue-800' :
                             prompt.category === 'science' ? 'bg-purple-100 text-purple-800' :
                             prompt.category === 'gaming' ? 'bg-red-100 text-red-800' :
-                            'bg-orange-100 text-orange-800'
+                            'bg-yellow-100 text-yellow-800'
                           }`}
                         >
                           {prompt.category || 'General'}
                         </Badge>
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <span className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           {formatDistanceToNow(new Date(prompt.created_at), { addSuffix: true })}
                         </span>
                       </div>
@@ -418,8 +429,8 @@ export default function UserProfilePage() {
 
                     {/* Prompt Text */}
                     <div className="mb-4">
-                      <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-orange-400`}>
+                      <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2 text-sm md:text-base`}>Prompt:</h3>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-orange-400 text-sm md:text-base`}>
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -427,7 +438,7 @@ export default function UserProfilePage() {
                     {/* Output */}
                     {prompt.output_url && (
                       <div className="mb-4">
-                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Output:</h3>
+                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2 text-sm md:text-base`}>Output:</h3>
                         {prompt.output_type === 'image' && (
                           <img
                             src={prompt.output_url}
@@ -448,7 +459,7 @@ export default function UserProfilePage() {
                         )}
                         {prompt.output_type === 'text' && (
                           <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg max-w-2xl border border-gray-200`}>
-                            <pre className={`whitespace-pre-wrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            <pre className={`whitespace-pre-wrap text-xs md:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                               {prompt.output_url}
                             </pre>
                           </div>
@@ -475,7 +486,7 @@ export default function UserProfilePage() {
 
                     {/* Stats */}
                     <div className="flex items-center justify-between">
-                      <div className={`flex items-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div className={`flex items-center ${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
                         <Heart className="mr-1 h-4 w-4" />
                         {prompt.likes_count} likes
                       </div>

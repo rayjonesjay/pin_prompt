@@ -87,6 +87,7 @@ export default function FeedPage() {
   const [submittingComment, setSubmittingComment] = useState<string | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [likingPrompts, setLikingPrompts] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   // Debounced search effect
@@ -239,31 +240,51 @@ export default function FeedPage() {
   };
 
   const handleLike = async (promptId: string, isLiked: boolean, promptUserId: string) => {
-    if (!user) return;
+    if (!user || likingPrompts.has(promptId)) return;
+
+    setLikingPrompts(prev => new Set(prev).add(promptId));
 
     try {
       if (isLiked) {
         // Unlike
-        await supabase
+        const { error: deleteError } = await supabase
           .from('likes')
           .delete()
           .eq('user_id', user.id)
           .eq('prompt_id', promptId);
 
-        await supabase
-          .from('prompts')
-          .update({ likes_count: supabase.raw('likes_count - 1') })
-          .eq('id', promptId);
+        if (deleteError) throw deleteError;
+
+        const { error: updateError } = await supabase.rpc('decrement_likes', {
+          prompt_id: promptId
+        });
+
+        if (updateError) {
+          // Fallback to direct update if RPC doesn't exist
+          await supabase
+            .from('prompts')
+            .update({ likes_count: supabase.raw('likes_count - 1') })
+            .eq('id', promptId);
+        }
       } else {
         // Like
-        await supabase
+        const { error: insertError } = await supabase
           .from('likes')
           .insert([{ user_id: user.id, prompt_id: promptId }]);
 
-        await supabase
-          .from('prompts')
-          .update({ likes_count: supabase.raw('likes_count + 1') })
-          .eq('id', promptId);
+        if (insertError) throw insertError;
+
+        const { error: updateError } = await supabase.rpc('increment_likes', {
+          prompt_id: promptId
+        });
+
+        if (updateError) {
+          // Fallback to direct update if RPC doesn't exist
+          await supabase
+            .from('prompts')
+            .update({ likes_count: supabase.raw('likes_count + 1') })
+            .eq('id', promptId);
+        }
       }
 
       // Update local state
@@ -272,12 +293,18 @@ export default function FeedPage() {
           ? { 
               ...prompt, 
               is_liked: !isLiked,
-              likes_count: isLiked ? prompt.likes_count - 1 : prompt.likes_count + 1
+              likes_count: isLiked ? Math.max(0, prompt.likes_count - 1) : prompt.likes_count + 1
             }
           : prompt
       ));
     } catch (error) {
       console.error('Error updating like:', error);
+    } finally {
+      setLikingPrompts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(promptId);
+        return newSet;
+      });
     }
   };
 
@@ -399,7 +426,7 @@ export default function FeedPage() {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your feed...</p>
         </div>
       </div>
@@ -444,7 +471,7 @@ export default function FeedPage() {
                         <AvatarImage src={user?.avatar_url} />
                         <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <label className="absolute -bottom-1 -right-1 bg-green-600 rounded-full p-1 cursor-pointer hover:bg-green-700 transition-colors">
+                      <label className="absolute -bottom-1 -right-1 bg-orange-600 rounded-full p-1 cursor-pointer hover:bg-orange-700 transition-colors">
                         <Camera className="h-3 w-3 text-white" />
                         <input
                           type="file"
@@ -507,7 +534,7 @@ export default function FeedPage() {
                       <AvatarImage src={user.avatar_url} />
                       <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <label className="absolute -bottom-1 -right-1 bg-green-600 rounded-full p-1 cursor-pointer hover:bg-green-700 transition-colors">
+                    <label className="absolute -bottom-1 -right-1 bg-orange-600 rounded-full p-1 cursor-pointer hover:bg-orange-700 transition-colors">
                       <Camera className="h-3 w-3 text-white" />
                       <input
                         type="file"
@@ -618,7 +645,7 @@ export default function FeedPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                  className={sortBy === 'recent' ? 'bg-orange-600 hover:bg-orange-700 text-white' : ''}
                 >
                   Recent
                 </Button>
@@ -626,7 +653,7 @@ export default function FeedPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                  className={sortBy === 'trending' ? 'bg-orange-600 hover:bg-orange-700 text-white' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -635,7 +662,7 @@ export default function FeedPage() {
                   variant={sortBy === 'following' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('following')}
-                  className={sortBy === 'following' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                  className={sortBy === 'following' ? 'bg-orange-600 hover:bg-orange-700 text-white' : ''}
                 >
                   Following
                 </Button>
@@ -646,25 +673,25 @@ export default function FeedPage() {
             <div className="space-y-6">
               {prompts.map((prompt) => (
                 <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
-                  prompt.category === 'ai' ? 'border-l-green-500' :
+                  prompt.category === 'ai' ? 'border-l-orange-500' :
                   prompt.category === 'programming' ? 'border-l-blue-500' :
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
-                  'border-l-orange-500'
+                  'border-l-yellow-500'
                 } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-sm'}`}>
                   <CardContent className="p-6">
                     {/* User Info */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <Avatar className="h-10 w-10 ring-2 ring-green-200">
+                      <Avatar className="h-10 w-10 ring-2 ring-orange-200">
                         <AvatarImage src={prompt.users.avatar_url} />
-                        <AvatarFallback className="bg-gradient-to-br from-green-400 to-blue-500 text-white">
+                        <AvatarFallback className="bg-gradient-to-br from-orange-400 to-red-500 text-white">
                           {prompt.users.username[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className={`font-medium ${darkMode ? 'text-white hover:text-green-400' : 'text-gray-900 hover:text-green-600'} transition-colors`}
+                          className={`font-medium ${darkMode ? 'text-white hover:text-orange-400' : 'text-gray-900 hover:text-orange-600'} transition-colors`}
                         >
                           @{prompt.users.username}
                         </button>
@@ -676,11 +703,11 @@ export default function FeedPage() {
                         <Badge 
                           variant="secondary" 
                           className={`${
-                            prompt.category === 'ai' ? 'bg-green-100 text-green-800' :
+                            prompt.category === 'ai' ? 'bg-orange-100 text-orange-800' :
                             prompt.category === 'programming' ? 'bg-blue-100 text-blue-800' :
                             prompt.category === 'science' ? 'bg-purple-100 text-purple-800' :
                             prompt.category === 'gaming' ? 'bg-red-100 text-red-800' :
-                            'bg-orange-100 text-orange-800'
+                            'bg-yellow-100 text-yellow-800'
                           }`}
                         >
                           {prompt.category}
@@ -691,7 +718,7 @@ export default function FeedPage() {
                     {/* Prompt Text */}
                     <div className="mb-4">
                       <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-green-400`}>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-orange-400`}>
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -752,13 +779,18 @@ export default function FeedPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleLike(prompt.id, prompt.is_liked || false, prompt.user_id)}
+                          disabled={likingPrompts.has(prompt.id)}
                           className={`${
                             prompt.is_liked 
                               ? 'text-red-500 hover:text-red-600' 
                               : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
                           } transition-colors`}
                         >
-                          <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
+                          {likingPrompts.has(prompt.id) ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-1"></div>
+                          ) : (
+                            <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
+                          )}
                           {prompt.likes_count}
                         </Button>
                         
@@ -803,7 +835,7 @@ export default function FeedPage() {
                               size="sm"
                               onClick={() => handleCommentSubmit(prompt.id)}
                               disabled={!newComments[prompt.id]?.trim() || submittingComment === prompt.id}
-                              className="bg-green-600 hover:bg-green-700 text-white"
+                              className="bg-orange-600 hover:bg-orange-700 text-white"
                             >
                               <Send className="h-4 w-4" />
                             </Button>
@@ -844,7 +876,7 @@ export default function FeedPage() {
 
               {loadingMore && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
                   <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading more prompts...</p>
                 </div>
               )}
@@ -858,7 +890,7 @@ export default function FeedPage() {
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>No prompts found.</p>
-                  <Button onClick={() => router.push('/upload')} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button onClick={() => router.push('/upload')} className="bg-orange-600 hover:bg-orange-700 text-white">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
                   </Button>

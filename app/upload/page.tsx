@@ -181,7 +181,7 @@ export default function UploadPage() {
   if (!user) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600"></div>
       </div>
     );
   }
@@ -251,7 +251,7 @@ export default function UploadPage() {
                       onClick={() => setOutputType(type)}
                       className={`flex flex-col items-center p-4 h-auto ${
                         outputType === type 
-                          ? 'bg-green-600 hover:bg-green-700 text-white' 
+                          ? 'bg-orange-600 hover:bg-orange-700 text-white' 
                           : `${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`
                       }`}
                     >
@@ -267,7 +267,7 @@ export default function UploadPage() {
                 <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : ''}`}>LLM Model Used *</Label>
                 {loadingModels ? (
                   <div className="flex items-center justify-center p-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
                     <span className={`ml-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading models...</span>
                   </div>
                 ) : (
@@ -333,7 +333,7 @@ export default function UploadPage() {
                           {outputType === 'audio' && 'MP3, WAV up to 25MB'}
                         </p>
                         {outputFile && (
-                          <p className="text-sm text-green-600 mt-2">
+                          <p className="text-sm text-orange-600 mt-2">
                             Selected: {outputFile.name}
                           </p>
                         )}
@@ -368,7 +368,7 @@ export default function UploadPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                 disabled={loading}
               >
                 {loading ? 'Uploading...' : 'Share PinPrompt'}
