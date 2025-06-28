@@ -187,10 +187,10 @@ export default function UploadPage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'} p-4`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'} p-4`}>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
@@ -207,22 +207,22 @@ export default function UploadPage() {
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
           </div>
-          <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Upload PinPrompt</h1>
-          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-2`}>Share your AI-generated content with the community</p>
+          <h1 className={`text-2xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Upload PinPrompt</h1>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-2 text-sm md:text-base`}>Share your AI-generated content with the community</p>
         </div>
 
-        <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+        <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg`}>
           <CardHeader>
-            <CardTitle className={`flex items-center ${darkMode ? 'text-white' : ''}`}>
+            <CardTitle className={`flex items-center ${darkMode ? 'text-white' : 'text-gray-900'} text-lg md:text-xl`}>
               <Upload className="mr-2 h-5 w-5" />
               Create New PinPrompt
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Prompt Text */}
+              {/* Prompt Text - Made Greyish */}
               <div className="space-y-2">
-                <Label htmlFor="prompt" className={`${darkMode ? 'text-gray-200' : ''}`}>Prompt *</Label>
+                <Label htmlFor="prompt" className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>Prompt *</Label>
                 <Textarea
                   id="prompt"
                   placeholder="Enter the prompt you used to generate the content..."
@@ -230,14 +230,18 @@ export default function UploadPage() {
                   onChange={(e) => setPromptText(e.target.value)}
                   required
                   rows={4}
-                  className={`resize-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  className={`resize-none ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' 
+                      : 'bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500'
+                  } focus:ring-orange-500 focus:border-orange-500`}
                 />
               </div>
 
               {/* Output Type */}
               <div className="space-y-2">
-                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Output Type *</Label>
-                <div className="grid grid-cols-4 gap-2">
+                <Label className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>Output Type *</Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {[
                     { type: 'image' as const, icon: Image, label: 'Image' },
                     { type: 'video' as const, icon: Video, label: 'Video' },
@@ -249,14 +253,14 @@ export default function UploadPage() {
                       type="button"
                       variant={outputType === type ? 'default' : 'outline'}
                       onClick={() => setOutputType(type)}
-                      className={`flex flex-col items-center p-4 h-auto ${
+                      className={`flex flex-col items-center p-3 md:p-4 h-auto ${
                         outputType === type 
-                          ? 'bg-orange-600 hover:bg-orange-700 text-white' 
-                          : `${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`
+                          ? 'bg-orange-600 hover:bg-orange-700 text-white border-orange-600' 
+                          : `${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500' : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'}`
                       }`}
                     >
-                      <Icon className="h-6 w-6 mb-2" />
-                      <span className="text-sm">{label}</span>
+                      <Icon className="h-5 w-5 md:h-6 md:w-6 mb-2" />
+                      <span className="text-xs md:text-sm">{label}</span>
                     </Button>
                   ))}
                 </div>
@@ -264,7 +268,7 @@ export default function UploadPage() {
 
               {/* LLM Model */}
               <div className="space-y-2">
-                <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : ''}`}>LLM Model Used *</Label>
+                <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>LLM Model Used *</Label>
                 {loadingModels ? (
                   <div className="flex items-center justify-center p-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
@@ -272,15 +276,19 @@ export default function UploadPage() {
                   </div>
                 ) : (
                   <Select value={llmModel} onValueChange={setLlmModel} required>
-                    <SelectTrigger className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
+                    <SelectTrigger className={`${
+                      darkMode 
+                        ? 'bg-gray-700 border-gray-600 text-white' 
+                        : 'bg-gray-100 border-gray-300 text-gray-900'
+                    } focus:ring-orange-500 focus:border-orange-500`}>
                       <SelectValue placeholder="Select the AI model you used" />
                     </SelectTrigger>
-                    <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : ''}`}>
+                    <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
                       {filteredModels.map((model) => (
                         <SelectItem 
                           key={model.id} 
                           value={model.name}
-                          className={`${darkMode ? 'text-white hover:bg-gray-600' : ''}`}
+                          className={`${darkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'}`}
                         >
                           <div className="flex flex-col">
                             <span>{model.name}</span>
@@ -297,7 +305,7 @@ export default function UploadPage() {
 
               {/* Output Content */}
               <div className="space-y-2">
-                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Output Content *</Label>
+                <Label className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>Output Content *</Label>
                 {outputType === 'text' ? (
                   <Textarea
                     placeholder="Paste the text output generated by the AI..."
@@ -305,10 +313,16 @@ export default function UploadPage() {
                     onChange={(e) => setOutputText(e.target.value)}
                     required
                     rows={6}
-                    className={`resize-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                    className={`resize-none ${
+                      darkMode 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' 
+                        : 'bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500'
+                    } focus:ring-orange-500 focus:border-orange-500`}
                   />
                 ) : (
-                  <div className={`border-2 border-dashed ${darkMode ? 'border-gray-600' : 'border-gray-300'} rounded-lg p-6 text-center`}>
+                  <div className={`border-2 border-dashed ${
+                    darkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-100'
+                  } rounded-lg p-6 text-center hover:border-orange-400 transition-colors`}>
                     <Input
                       type="file"
                       accept={
@@ -323,17 +337,17 @@ export default function UploadPage() {
                     />
                     <Label htmlFor="file-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center">
-                        <Upload className={`h-12 w-12 ${darkMode ? 'text-gray-500' : 'text-gray-400'} mb-4`} />
-                        <p className={`text-lg font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <Upload className={`h-10 w-10 md:h-12 md:w-12 ${darkMode ? 'text-gray-500' : 'text-gray-400'} mb-4`} />
+                        <p className={`text-base md:text-lg font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                           Click to upload {outputType}
                         </p>
-                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                        <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                           {outputType === 'image' && 'PNG, JPG, GIF up to 10MB'}
                           {outputType === 'video' && 'MP4, MOV up to 50MB'}
                           {outputType === 'audio' && 'MP3, WAV up to 25MB'}
                         </p>
                         {outputFile && (
-                          <p className="text-sm text-orange-600 mt-2">
+                          <p className="text-sm text-orange-600 mt-2 font-medium">
                             Selected: {outputFile.name}
                           </p>
                         )}
@@ -345,14 +359,22 @@ export default function UploadPage() {
 
               {/* Category */}
               <div className="space-y-2">
-                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Category (Optional)</Label>
+                <Label className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>Category (Optional)</Label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
+                  <SelectTrigger className={`${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-gray-100 border-gray-300 text-gray-900'
+                  } focus:ring-orange-500 focus:border-orange-500`}>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : ''}`}>
+                  <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat} className={`${darkMode ? 'text-white hover:bg-gray-600' : ''}`}>
+                      <SelectItem 
+                        key={cat} 
+                        value={cat} 
+                        className={`${darkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'}`}
+                      >
                         {cat.charAt(0).toUpperCase() + cat.slice(1)}
                       </SelectItem>
                     ))}
@@ -361,17 +383,24 @@ export default function UploadPage() {
               </div>
 
               {error && (
-                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                <div className="text-red-600 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 dark:border-red-800">
                   {error}
                 </div>
               )}
 
               <Button
                 type="submit"
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 font-medium text-base"
                 disabled={loading}
               >
-                {loading ? 'Uploading...' : 'Share PinPrompt'}
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Uploading...
+                  </div>
+                ) : (
+                  'Share PinPrompt'
+                )}
               </Button>
             </form>
           </CardContent>

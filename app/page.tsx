@@ -85,45 +85,45 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Brand and Features */}
-      <div className="w-1/2 bg-slate-800 text-white p-12 flex flex-col justify-between">
+      <div className="w-full lg:w-1/2 bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-2 lg:order-1">
         {/* Header */}
         <div>
-          <div className="flex items-center mb-12">
-            <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4">
-              <Zap className="h-7 w-7 text-white" />
+          <div className="flex items-center mb-8 lg:mb-12">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-orange-500 rounded-xl flex items-center justify-center mr-3 lg:mr-4">
+              <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
             </div>
-            <h1 className="text-3xl font-bold">PinPrompt</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold">PinPrompt</h1>
           </div>
 
           {/* Main Content */}
-          <div className="mb-16">
-            <h2 className="text-5xl font-bold mb-4 leading-tight">
+          <div className="mb-12 lg:mb-16">
+            <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-green-400">Creations</span>
+              <span className="text-orange-400">Creations</span>
             </h2>
-            <p className="text-xl text-slate-300 mb-12 leading-relaxed">
-              Discover, share, and learn from AI-generated content and the prompts that created them.<br />
+            <p className="text-lg lg:text-xl text-slate-300 mb-8 lg:mb-12 leading-relaxed">
+              Discover, share, and learn from AI-generated content and the prompts that created them.<br className="hidden lg:block" />
               Join our community of creators pushing the boundaries of AI creativity.
             </p>
 
             {/* Feature Cards */}
-            <div className="grid grid-cols-2 gap-6">
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Transparency</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
+                <h3 className="text-orange-400 font-semibold mb-2">Transparency</h3>
                 <p className="text-slate-300 text-sm">Real prompts, real results</p>
               </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Community</h3>
+              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
+                <h3 className="text-orange-400 font-semibold mb-2">Community</h3>
                 <p className="text-slate-300 text-sm">Learn from others</p>
               </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Discovery</h3>
+              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
+                <h3 className="text-orange-400 font-semibold mb-2">Discovery</h3>
                 <p className="text-slate-300 text-sm">Find new techniques</p>
               </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Innovation</h3>
+              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
+                <h3 className="text-orange-400 font-semibold mb-2">Innovation</h3>
                 <p className="text-slate-300 text-sm">Push AI boundaries</p>
               </div>
             </div>
@@ -131,25 +131,25 @@ export default function LandingPage() {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center space-x-6 text-slate-400">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 text-slate-400">
           <div className="flex items-center space-x-2">
             <span className="text-sm">Built on</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
+              className="text-orange-400 hover:text-orange-300 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
-          <div className="w-1 h-1 bg-slate-600 rounded-full"></div>
+          <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
           <a 
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
+            className="flex items-center space-x-2 text-slate-400 hover:text-orange-400 transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -158,13 +158,13 @@ export default function LandingPage() {
       </div>
 
       {/* Right Side - Authentication */}
-      <div className="w-1/2 bg-white flex items-center justify-center p-12">
+      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-1 lg:order-2">
         <div className="w-full max-w-md">
           <Card className="bg-white shadow-xl border-0">
-            <CardContent className="p-8">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
-                <p className="text-gray-600">
+            <CardContent className="p-6 lg:p-8">
+              <div className="text-center mb-6 lg:mb-8">
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
+                <p className="text-gray-600 text-sm lg:text-base">
                   Sign in to your account or create a new one
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                      className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                     />
                   </div>
                 )}
@@ -220,7 +220,7 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
 
@@ -234,7 +234,7 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
 
@@ -246,10 +246,17 @@ export default function LandingPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 transition-colors"
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 transition-colors font-medium"
                   disabled={loading}
                 >
-                  {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Please wait...
+                    </div>
+                  ) : (
+                    isSignUp ? 'Sign Up' : 'Sign In'
+                  )}
                 </Button>
               </form>
 
