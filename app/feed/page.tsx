@@ -270,9 +270,11 @@ export default function FeedPage() {
         if (rpcError) {
           // Fallback to direct update if RPC fails
           console.warn('RPC decrement_likes failed, using direct update:', rpcError);
+          const currentPrompt = prompts.find(p => p.id === promptId);
+          const currentLikesCount = currentPrompt?.likes_count ?? 0;
           const { error: updateError } = await supabase
             .from('prompts')
-            .update({ likes_count: Math.max(0, prompts.find(p => p.id === promptId)?.likes_count - 1 || 0) })
+            .update({ likes_count: Math.max(0, currentLikesCount - 1) })
             .eq('id', promptId);
 
           if (updateError) throw updateError;
@@ -293,9 +295,11 @@ export default function FeedPage() {
         if (rpcError) {
           // Fallback to direct update if RPC fails
           console.warn('RPC increment_likes failed, using direct update:', rpcError);
+          const currentPrompt = prompts.find(p => p.id === promptId);
+          const currentLikesCount = currentPrompt?.likes_count ?? 0;
           const { error: updateError } = await supabase
             .from('prompts')
-            .update({ likes_count: (prompts.find(p => p.id === promptId)?.likes_count || 0) + 1 })
+            .update({ likes_count: currentLikesCount + 1 })
             .eq('id', promptId);
 
           if (updateError) throw updateError;
