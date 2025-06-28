@@ -26,7 +26,9 @@ import {
   Sun,
   Filter,
   Send,
-  MoreVertical
+  MoreVertical,
+  Home,
+  Camera
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -83,6 +85,8 @@ export default function FeedPage() {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [submittingComment, setSubmittingComment] = useState<string | null>(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const router = useRouter();
 
   // Debounced search effect
@@ -328,6 +332,40 @@ export default function FeedPage() {
     }
   };
 
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) return;
+
+    setUploadingAvatar(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('outputs')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('outputs')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: data.publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      setUser(prev => prev ? { ...prev, avatar_url: data.publicUrl } : null);
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
@@ -373,14 +411,7 @@ export default function FeedPage() {
       {/* Mobile Header */}
       <div className={`lg:hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex items-center justify-between`}>
         <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <h1 className={`ml-2 text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
+          <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -390,46 +421,110 @@ export default function FeedPage() {
           >
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.avatar_url} />
-            <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="relative"
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.avatar_url} />
+                <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </Button>
+            
+            {/* Profile Menu Dropdown */}
+            {showProfileMenu && (
+              <div className={`absolute right-0 top-full mt-2 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-lg z-50`}>
+                <div className="p-4">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="relative">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={user?.avatar_url} />
+                        <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <label className="absolute -bottom-1 -right-1 bg-green-600 rounded-full p-1 cursor-pointer hover:bg-green-700 transition-colors">
+                        <Camera className="h-3 w-3 text-white" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleAvatarUpload(file);
+                          }}
+                        />
+                      </label>
+                      {uploadingAvatar && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>@{user?.username}</p>
+                      <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {user?.followers_count} followers
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="flex">
-        {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        {/* Desktop Sidebar */}
+        <div className={`hidden lg:block fixed inset-y-0 left-0 z-50 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r`}>
           <div className="flex flex-col h-full">
             {/* Sidebar Header */}
             <div className={`p-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-b`}>
               <div className="flex items-center justify-between">
                 <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="hidden lg:flex"
-                  >
-                    {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSidebarOpen(false)}
-                    className="lg:hidden"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDarkMode(!darkMode)}
+                >
+                  {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
               </div>
               {user && (
                 <div className="mt-4 flex items-center space-x-3">
-                  <Avatar>
-                    <AvatarImage src={user.avatar_url} />
-                    <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar>
+                      <AvatarImage src={user.avatar_url} />
+                      <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <label className="absolute -bottom-1 -right-1 bg-green-600 rounded-full p-1 cursor-pointer hover:bg-green-700 transition-colors">
+                      <Camera className="h-3 w-3 text-white" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleAvatarUpload(file);
+                        }}
+                      />
+                    </label>
+                    {uploadingAvatar && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>@{user.username}</p>
                     <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -482,17 +577,9 @@ export default function FeedPage() {
           </div>
         </div>
 
-        {/* Overlay for mobile */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
         {/* Main Content */}
-        <div className="flex-1 lg:ml-0">
-          <div className="max-w-2xl mx-auto p-6">
+        <div className="flex-1 lg:ml-64">
+          <div className="max-w-2xl mx-auto p-6 pb-20 lg:pb-6">
             {/* Search and Filter */}
             <div className="mb-8 space-y-4">
               <div className="relative">
@@ -784,6 +871,56 @@ export default function FeedPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className={`lg:hidden fixed bottom-0 left-0 right-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t`}>
+        <div className="flex items-center justify-around py-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/feed')}
+            className="flex flex-col items-center p-2"
+          >
+            <Home className="h-5 w-5" />
+            <span className="text-xs mt-1">Feed</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/upload')}
+            className="flex flex-col items-center p-2"
+          >
+            <Upload className="h-5 w-5" />
+            <span className="text-xs mt-1">Upload</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/profile')}
+            className="flex flex-col items-center p-2"
+          >
+            <User className="h-5 w-5" />
+            <span className="text-xs mt-1">Profile</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/forum')}
+            className="flex flex-col items-center p-2"
+          >
+            <MessageSquare className="h-5 w-5" />
+            <span className="text-xs mt-1">Forum</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Click outside to close profile menu */}
+      {showProfileMenu && (
+        <div
+          className="fixed inset-0 z-40 lg:hidden"
+          onClick={() => setShowProfileMenu(false)}
+        />
+      )}
     </div>
   );
 }
