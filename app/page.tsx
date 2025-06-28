@@ -132,9 +132,12 @@ export default function LandingPage() {
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-1"
+              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-2"
             >
               <span>Bolt</span>
+              <div className="w-6 h-6 bg-slate-700 rounded flex items-center justify-center">
+                <span className="text-white text-xs font-bold">bolt</span>
+              </div>
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
