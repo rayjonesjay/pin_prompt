@@ -15,8 +15,8 @@ export default function NotFound() {
           {/* 404 Illustration */}
           <div className="mb-8">
             <div className="text-8xl font-bold text-gray-200 mb-4">404</div>
-            <div className="w-24 h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <Search className="h-12 w-12 text-green-600" />
+            <div className="w-24 h-24 mx-auto bg-teal-100 rounded-full flex items-center justify-center mb-4">
+              <Search className="h-12 w-12 text-teal-600" />
             </div>
           </div>
 
@@ -63,7 +63,7 @@ export default function NotFound() {
               Need help? Contact us or visit our{' '}
               <button 
                 onClick={() => router.push('/forum')}
-                className="text-green-600 hover:text-green-700 underline"
+                className="text-teal-600 hover:text-teal-700 underline"
               >
                 community forum
               </button>

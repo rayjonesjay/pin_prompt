@@ -177,7 +177,7 @@ export default function UploadPage() {
   if (!user) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
       </div>
     );
   }
@@ -230,7 +230,7 @@ export default function UploadPage() {
                     darkMode 
                       ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' 
                       : 'bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500'
-                  } focus:ring-orange-500 focus:border-orange-500`}
+                  } focus:ring-teal-500 focus:border-teal-500`}
                 />
               </div>
 
@@ -251,7 +251,7 @@ export default function UploadPage() {
                       onClick={() => setOutputType(type)}
                       className={`flex flex-col items-center p-3 md:p-4 h-auto ${
                         outputType === type 
-                          ? 'bg-orange-600 hover:bg-orange-700 text-white border-orange-600' 
+                          ? 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600' 
                           : `${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500' : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'}`
                       }`}
                     >
@@ -267,7 +267,7 @@ export default function UploadPage() {
                 <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} font-medium`}>LLM Model Used *</Label>
                 {loadingModels ? (
                   <div className="flex items-center justify-center p-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
                     <span className={`ml-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading models...</span>
                   </div>
                 ) : (
@@ -276,7 +276,7 @@ export default function UploadPage() {
                       darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white' 
                         : 'bg-gray-100 border-gray-300 text-gray-900'
-                    } focus:ring-orange-500 focus:border-orange-500`}>
+                    } focus:ring-teal-500 focus:border-teal-500`}>
                       <SelectValue placeholder="Select the AI model you used" />
                     </SelectTrigger>
                     <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
@@ -313,12 +313,12 @@ export default function UploadPage() {
                       darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' 
                         : 'bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500'
-                    } focus:ring-orange-500 focus:border-orange-500`}
+                    } focus:ring-teal-500 focus:border-teal-500`}
                   />
                 ) : (
                   <div className={`border-2 border-dashed ${
                     darkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-100'
-                  } rounded-lg p-6 text-center hover:border-orange-400 transition-colors`}>
+                  } rounded-lg p-6 text-center hover:border-teal-400 transition-colors`}>
                     <Input
                       type="file"
                       accept={
@@ -343,7 +343,7 @@ export default function UploadPage() {
                           {outputType === 'audio' && 'MP3, WAV up to 25MB'}
                         </p>
                         {outputFile && (
-                          <p className="text-sm text-orange-600 mt-2 font-medium">
+                          <p className="text-sm text-teal-600 mt-2 font-medium">
                             Selected: {outputFile.name}
                           </p>
                         )}
@@ -361,7 +361,7 @@ export default function UploadPage() {
                     darkMode 
                       ? 'bg-gray-700 border-gray-600 text-white' 
                       : 'bg-gray-100 border-gray-300 text-gray-900'
-                  } focus:ring-orange-500 focus:border-orange-500`}>
+                  } focus:ring-teal-500 focus:border-teal-500`}>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
@@ -386,7 +386,7 @@ export default function UploadPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 font-medium text-base"
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 font-medium text-base"
                 disabled={loading}
               >
                 {loading ? (

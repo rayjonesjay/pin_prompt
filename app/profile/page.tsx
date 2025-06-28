@@ -134,7 +134,7 @@ export default function ProfilePage() {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your profile...</p>
         </div>
       </div>
@@ -182,9 +182,9 @@ export default function ProfilePage() {
             <div className="flex flex-col space-y-4">
               {/* Avatar and Basic Info */}
               <div className="flex items-center space-x-4">
-                <Avatar className="h-16 w-16 md:h-24 md:w-24 ring-4 ring-orange-200">
+                <Avatar className="h-16 w-16 md:h-24 md:w-24 ring-4 ring-teal-200">
                   <AvatarImage src={user.avatar_url} />
-                  <AvatarFallback className="text-lg md:text-2xl bg-gradient-to-br from-orange-400 to-red-500 text-white">
+                  <AvatarFallback className="text-lg md:text-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-white">
                     {user.username[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -227,7 +227,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-3 md:p-6 text-center">
-              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
+              <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {prompts.length}
               </div>
               <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>PinPrompts</div>
@@ -235,7 +235,7 @@ export default function ProfilePage() {
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-3 md:p-6 text-center">
-              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
+              <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {prompts.reduce((sum, prompt) => sum + prompt.likes_count, 0)}
               </div>
               <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Likes</div>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-3 md:p-6 text-center">
-              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">
+              <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {user.followers_count}
               </div>
               <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Followers</div>
@@ -258,7 +258,7 @@ export default function ProfilePage() {
               <FileText className="h-5 w-5 md:h-6 md:w-6 mr-2" />
               Your PinPrompts
             </h2>
-            <Button onClick={() => router.push('/upload')} className="bg-orange-600 hover:bg-orange-700 text-white text-sm md:text-base">
+            <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white text-sm md:text-base">
               Create New PinPrompt
             </Button>
           </div>
@@ -279,7 +279,7 @@ export default function ProfilePage() {
                 <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6 text-sm md:text-base`}>
                   Start sharing your AI-generated content with the community
                 </p>
-                <Button onClick={() => router.push('/upload')} className="bg-orange-600 hover:bg-orange-700 text-white">
+                <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white">
                   Upload Your First PinPrompt
                 </Button>
               </CardContent>
@@ -288,7 +288,7 @@ export default function ProfilePage() {
             <div className="space-y-4 md:space-y-6">
               {prompts.map((prompt) => (
                 <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
-                  prompt.category === 'ai' ? 'border-l-orange-500' :
+                  prompt.category === 'ai' ? 'border-l-teal-500' :
                   prompt.category === 'programming' ? 'border-l-blue-500' :
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                         <Badge 
                           variant="secondary" 
                           className={`text-xs ${
-                            prompt.category === 'ai' ? 'bg-orange-100 text-orange-800' :
+                            prompt.category === 'ai' ? 'bg-teal-100 text-teal-800' :
                             prompt.category === 'programming' ? 'bg-blue-100 text-blue-800' :
                             prompt.category === 'science' ? 'bg-purple-100 text-purple-800' :
                             prompt.category === 'gaming' ? 'bg-red-100 text-red-800' :
@@ -360,7 +360,7 @@ export default function ProfilePage() {
                     {/* Prompt Text */}
                     <div className="mb-4">
                       <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2 text-sm md:text-base`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-orange-400 text-sm md:text-base`}>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-teal-400 text-sm md:text-base`}>
                         {prompt.prompt_text}
                       </p>
                     </div>

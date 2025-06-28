@@ -64,7 +64,7 @@ export default function ForumPage() {
   const categories = [
     { id: 'all', name: 'All Topics', color: 'bg-gray-100' },
     { id: 'prompt-feedback', name: 'Prompt Feedback', color: 'bg-blue-100' },
-    { id: 'llm-discussions', name: 'LLM Discussions', color: 'bg-green-100' },
+    { id: 'llm-discussions', name: 'LLM Discussions', color: 'bg-teal-100' },
     { id: 'announcements', name: 'Announcements', color: 'bg-yellow-100' },
     { id: 'prompt-engineering', name: 'Prompt Engineering', color: 'bg-purple-100' },
     { id: 'general', name: 'General', color: 'bg-gray-100' },
@@ -135,7 +135,7 @@ export default function ForumPage() {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading forum...</p>
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function ForumPage() {
               {!isAuthenticated && (
                 <Button
                   onClick={() => router.push('/')}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-teal-600 hover:bg-teal-700 text-white"
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
@@ -178,14 +178,14 @@ export default function ForumPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center mb-2`}>
-                <MessageSquare className="h-8 w-8 mr-3 text-green-600" />
+                <MessageSquare className="h-8 w-8 mr-3 text-teal-600" />
                 Community Forum
               </h1>
               <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Discuss AI, share tips, and connect with fellow creators
               </p>
               {!isAuthenticated && (
-                <p className={`text-sm ${darkMode ? 'text-yellow-400' : 'text-orange-600'} mt-2`}>
+                <p className={`text-sm ${darkMode ? 'text-yellow-400' : 'text-teal-600'} mt-2`}>
                   Sign in to create posts and interact with the community
                 </p>
               )}
@@ -194,7 +194,7 @@ export default function ForumPage() {
             {isAuthenticated && (
               <Button 
                 onClick={() => setShowCreatePost(true)}
-                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-white"
+                className="mt-4 md:mt-0 bg-teal-600 hover:bg-teal-700 text-white"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 New Post
@@ -217,7 +217,7 @@ export default function ForumPage() {
                     onClick={() => setSelectedCategory(category.id)}
                     className={`w-full text-left p-3 rounded-lg transition-colors ${
                       selectedCategory === category.id
-                        ? 'bg-green-100 text-green-800 border border-green-200'
+                        ? 'bg-teal-100 text-teal-800 border border-teal-200'
                         : `${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100'}`
                     }`}
                   >
@@ -268,7 +268,7 @@ export default function ForumPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                  className={sortBy === 'recent' ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
                 >
                   <Clock className="mr-1 h-4 w-4" />
                   Recent
@@ -277,7 +277,7 @@ export default function ForumPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                  className={sortBy === 'trending' ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -287,7 +287,7 @@ export default function ForumPage() {
 
             {/* Create Post Modal */}
             {showCreatePost && isAuthenticated && (
-              <Card className={`mb-6 border-green-200 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+              <Card className={`mb-6 border-teal-200 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
                 <CardHeader>
                   <CardTitle className={`${darkMode ? 'text-white' : ''}`}>Create New Post</CardTitle>
                 </CardHeader>
@@ -327,7 +327,7 @@ export default function ForumPage() {
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <Button onClick={handleCreatePost} className="bg-green-600 hover:bg-green-700 text-white">Post</Button>
+                    <Button onClick={handleCreatePost} className="bg-teal-600 hover:bg-teal-700 text-white">Post</Button>
                     <Button variant="outline" onClick={() => setShowCreatePost(false)}>
                       Cancel
                     </Button>
@@ -347,11 +347,11 @@ export default function ForumPage() {
                   The forum feature is being developed. Database tables for forum posts and replies need to be created.
                 </p>
                 {isAuthenticated ? (
-                  <Button onClick={() => setShowCreatePost(true)} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button onClick={() => setShowCreatePost(true)} className="bg-teal-600 hover:bg-teal-700 text-white">
                     Create First Post
                   </Button>
                 ) : (
-                  <Button onClick={() => router.push('/')} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button onClick={() => router.push('/')} className="bg-teal-600 hover:bg-teal-700 text-white">
                     <LogIn className="mr-2 h-4 w-4" />
                     Sign In to Participate
                   </Button>

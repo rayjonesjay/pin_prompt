@@ -91,7 +91,7 @@ export default function LandingPage() {
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 rounded-xl flex items-center justify-center mr-3 lg:mr-4">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-teal-500 rounded-xl flex items-center justify-center mr-3 lg:mr-4">
               <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
             </div>
             <h1 className="text-2xl lg:text-3xl font-bold">PinPrompt</h1>
@@ -101,7 +101,7 @@ export default function LandingPage() {
           <div className="mb-12 lg:mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-green-400">Creations</span>
+              <span className="text-teal-400">Creations</span>
             </h2>
             <p className="text-lg lg:text-xl text-slate-300 mb-8 lg:mb-12 leading-relaxed">
               Discover, share, and learn from AI-generated content and the prompts that created them.<br className="hidden lg:block" />
@@ -111,8 +111,8 @@ export default function LandingPage() {
             {/* Slogan Section */}
             <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
               <div className="flex items-center mb-4">
-                <Sparkles className="h-6 w-6 text-green-400 mr-3" />
-                <h3 className="text-green-400 font-semibold text-lg lg:text-xl">Our Mission</h3>
+                <Sparkles className="h-6 w-6 text-teal-400 mr-3" />
+                <h3 className="text-teal-400 font-semibold text-lg lg:text-xl">Our Mission</h3>
               </div>
               <p className="text-2xl lg:text-3xl font-bold text-white leading-tight">
                 Prompt. Generate. Share. Inspire.
@@ -132,7 +132,7 @@ export default function LandingPage() {
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
+              className="text-teal-400 hover:text-teal-300 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
@@ -143,7 +143,7 @@ export default function LandingPage() {
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
+            className="flex items-center space-x-2 text-slate-400 hover:text-teal-400 transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -174,7 +174,7 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                      className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
                     />
                   </div>
                 )}
@@ -190,7 +190,7 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
@@ -204,7 +204,7 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function LandingPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 transition-colors font-medium"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 transition-colors font-medium"
                   disabled={loading}
                 >
                   {loading ? (
