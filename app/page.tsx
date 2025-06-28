@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Github, Sparkles, Zap } from 'lucide-react';
+import { ExternalLink, Github, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
@@ -91,9 +91,6 @@ export default function LandingPage() {
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center mr-3 lg:mr-4">
-              <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-teal-800" />
-            </div>
             <h1 className="text-2xl lg:text-3xl font-bold">PinPrompt</h1>
           </div>
 
@@ -109,12 +106,12 @@ export default function LandingPage() {
             </p>
 
             {/* Slogan Section - Reduced size */}
-            <div className="bg-teal-900 border border-teal-600 rounded-xl p-4 lg:p-6 mb-8 lg:mb-12">
+            <div className="bg-teal-900 border border-teal-600 rounded-xl p-4 lg:p-5 mb-8 lg:mb-12">
               <div className="flex items-center mb-3">
                 <Sparkles className="h-5 w-5 text-teal-300 mr-2" />
                 <h3 className="text-teal-300 font-semibold text-base lg:text-lg">Our Mission</h3>
               </div>
-              <p className="text-xl lg:text-2xl font-bold text-white leading-tight">
+              <p className="text-lg lg:text-xl font-bold text-white leading-tight">
                 Prompt. Generate. Share. Inspire.
               </p>
               <p className="text-teal-200 mt-2 text-xs lg:text-sm">
@@ -126,21 +123,23 @@ export default function LandingPage() {
 
         {/* Footer - Credits Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-300">
-          <div className="flex items-center space-x-3">
-            <span className="text-sm">Built on</span>
+          <div className="flex items-center space-x-4">
+            <span className="text-base lg:text-lg">Built on</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-3"
+              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
             >
-              <span>Bolt</span>
-              <img 
-                src="/bolt_budge.png" 
-                alt="Bolt" 
-                className="w-8 h-8 lg:w-10 lg:h-10"
-              />
-              <ExternalLink className="h-3 w-3" />
+              <span className="text-base lg:text-lg">Bolt</span>
+              <div 
+                className="w-12 h-12 lg:w-16 lg:h-16 bg-black rounded-2xl flex items-center justify-center"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10 L60 10 L45 50 L80 50 L40 90 L55 50 L20 50 Z' fill='white'/%3E%3C/svg%3E")`
+                }}
+              >
+              </div>
+              <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5" />
             </a>
           </div>
           <div className="w-1 h-1 bg-teal-500 rounded-full hidden sm:block"></div>
