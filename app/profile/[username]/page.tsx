@@ -45,12 +45,6 @@ interface Prompt {
   created_at: string;
 }
 
-// This function is required for static export but we'll handle it dynamically
-export async function generateStaticParams() {
-  // Return empty array since we can't pre-generate all possible usernames
-  return [];
-}
-
 export default function UserProfilePage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [profileUser, setProfileUser] = useState<User | null>(null);
