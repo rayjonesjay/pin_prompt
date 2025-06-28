@@ -91,7 +91,7 @@ export default function LandingPage() {
         {/* Header */}
         <div>
           <div className="flex items-center mb-12">
-            <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center mr-4">
+            <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4">
               <Zap className="h-7 w-7 text-white" />
             </div>
             <h1 className="text-3xl font-bold">PinPrompt</h1>
@@ -101,7 +101,7 @@ export default function LandingPage() {
           <div className="mb-16">
             <h2 className="text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-emerald-400">Creations</span>
+              <span className="text-green-400">Creations</span>
             </h2>
             <p className="text-xl text-slate-300 mb-12 leading-relaxed">
               Discover, share, and learn from AI-generated content and the prompts that created them.<br />
@@ -111,19 +111,19 @@ export default function LandingPage() {
             {/* Feature Cards */}
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-emerald-400 font-semibold mb-2">Transparency</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Transparency</h3>
                 <p className="text-slate-300 text-sm">Real prompts, real results</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-emerald-400 font-semibold mb-2">Community</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Community</h3>
                 <p className="text-slate-300 text-sm">Learn from others</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-emerald-400 font-semibold mb-2">Discovery</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Discovery</h3>
                 <p className="text-slate-300 text-sm">Find new techniques</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6">
-                <h3 className="text-emerald-400 font-semibold mb-2">Innovation</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Innovation</h3>
                 <p className="text-slate-300 text-sm">Push AI boundaries</p>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function LandingPage() {
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium flex items-center space-x-1"
+              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
@@ -149,7 +149,7 @@ export default function LandingPage() {
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-emerald-400 transition-colors"
+            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -204,7 +204,7 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
+                      className="border-gray-200 focus:border-green-500 focus:ring-green-500"
                     />
                   </div>
                 )}
@@ -220,7 +220,7 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
+                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
                   />
                 </div>
 
@@ -234,7 +234,7 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
+                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ export default function LandingPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 transition-colors"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 transition-colors"
                   disabled={loading}
                 >
                   {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}

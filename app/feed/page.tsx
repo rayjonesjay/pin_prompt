@@ -112,6 +112,9 @@ export default function FeedPage() {
 
   useEffect(() => {
     checkUser();
+    // Load dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
   }, []);
 
   useEffect(() => {
@@ -124,8 +127,10 @@ export default function FeedPage() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
   }, [darkMode]);
 
@@ -235,11 +240,6 @@ export default function FeedPage() {
 
   const handleLike = async (promptId: string, isLiked: boolean, promptUserId: string) => {
     if (!user) return;
-
-    // Prevent users from liking their own posts
-    if (user.id === promptUserId) {
-      return;
-    }
 
     try {
       if (isLiked) {
@@ -397,7 +397,7 @@ export default function FeedPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your feed...</p>
@@ -407,7 +407,7 @@ export default function FeedPage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Mobile Header */}
       <div className={`lg:hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex items-center justify-between`}>
         <div className="flex items-center">
@@ -618,7 +618,7 @@ export default function FeedPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-gradient-to-r from-green-600 to-green-700' : ''}
+                  className={sortBy === 'recent' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
                 >
                   Recent
                 </Button>
@@ -626,7 +626,7 @@ export default function FeedPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-gradient-to-r from-orange-500 to-yellow-500' : ''}
+                  className={sortBy === 'trending' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -635,7 +635,7 @@ export default function FeedPage() {
                   variant={sortBy === 'following' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('following')}
-                  className={sortBy === 'following' ? 'bg-gradient-to-r from-blue-500 to-purple-500' : ''}
+                  className={sortBy === 'following' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
                 >
                   Following
                 </Button>
@@ -691,7 +691,7 @@ export default function FeedPage() {
                     {/* Prompt Text */}
                     <div className="mb-4">
                       <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gradient-to-r from-gray-50 to-green-50'} p-3 rounded-lg border-l-2 border-green-400`}>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-green-400`}>
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -719,14 +719,14 @@ export default function FeedPage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-yellow-50'} p-4 rounded-lg border border-yellow-200`}>
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg border border-gray-200`}>
                             <pre className={`whitespace-pre-wrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-blue-50'} p-4 rounded-lg border border-blue-200`}>
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg border border-gray-200`}>
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.
@@ -752,13 +752,10 @@ export default function FeedPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleLike(prompt.id, prompt.is_liked || false, prompt.user_id)}
-                          disabled={user?.id === prompt.user_id}
                           className={`${
-                            user?.id === prompt.user_id 
-                              ? 'opacity-50 cursor-not-allowed' 
-                              : prompt.is_liked 
-                                ? 'text-red-500 hover:text-red-600' 
-                                : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
+                            prompt.is_liked 
+                              ? 'text-red-500 hover:text-red-600' 
+                              : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
                           } transition-colors`}
                         >
                           <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
@@ -806,7 +803,7 @@ export default function FeedPage() {
                               size="sm"
                               onClick={() => handleCommentSubmit(prompt.id)}
                               disabled={!newComments[prompt.id]?.trim() || submittingComment === prompt.id}
-                              className="bg-gradient-to-r from-green-600 to-green-700"
+                              className="bg-green-600 hover:bg-green-700 text-white"
                             >
                               <Send className="h-4 w-4" />
                             </Button>
@@ -861,7 +858,7 @@ export default function FeedPage() {
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>No prompts found.</p>
-                  <Button onClick={() => router.push('/upload')} className="bg-gradient-to-r from-green-600 to-green-700">
+                  <Button onClick={() => router.push('/upload')} className="bg-green-600 hover:bg-green-700 text-white">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
                   </Button>

@@ -56,14 +56,19 @@ export default function ProfilePage() {
 
   useEffect(() => {
     checkUser();
+    // Load dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
   }, []);
 
   // Dark mode effect
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
   }, [darkMode]);
 
@@ -127,7 +132,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your profile...</p>
@@ -138,7 +143,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
           <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>User not found</p>
           <Button onClick={() => router.push('/')} className="mt-4">
@@ -150,7 +155,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="max-w-4xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -213,7 +218,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-green-600 mb-2">
                 {prompts.length}
               </div>
               <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>PinPrompts</div>
@@ -221,7 +226,7 @@ export default function ProfilePage() {
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-green-600 mb-2">
                 {prompts.reduce((sum, prompt) => sum + prompt.likes_count, 0)}
               </div>
               <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Likes</div>
@@ -229,7 +234,7 @@ export default function ProfilePage() {
           </Card>
           <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
             <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-green-600 mb-2">
                 {user.followers_count}
               </div>
               <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Followers</div>
@@ -244,7 +249,7 @@ export default function ProfilePage() {
               <FileText className="h-6 w-6 mr-2" />
               Your PinPrompts
             </h2>
-            <Button onClick={() => router.push('/upload')} className="bg-gradient-to-r from-green-600 to-green-700">
+            <Button onClick={() => router.push('/upload')} className="bg-green-600 hover:bg-green-700 text-white">
               Create New PinPrompt
             </Button>
           </div>
@@ -265,7 +270,7 @@ export default function ProfilePage() {
                 <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
                   Start sharing your AI-generated content with the community
                 </p>
-                <Button onClick={() => router.push('/upload')} className="bg-gradient-to-r from-green-600 to-green-700">
+                <Button onClick={() => router.push('/upload')} className="bg-green-600 hover:bg-green-700 text-white">
                   Upload Your First PinPrompt
                 </Button>
               </CardContent>
@@ -344,7 +349,7 @@ export default function ProfilePage() {
                     {/* Prompt Text */}
                     <div className="mb-4">
                       <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gradient-to-r from-gray-50 to-green-50'} p-3 rounded-lg border-l-2 border-green-400`}>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-green-400`}>
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -372,14 +377,14 @@ export default function ProfilePage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-yellow-50'} p-4 rounded-lg max-w-2xl border border-yellow-200`}>
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg max-w-2xl border border-gray-200`}>
                             <pre className={`whitespace-pre-wrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-blue-50'} p-4 rounded-lg max-w-md border border-blue-200`}>
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg max-w-md border border-gray-200`}>
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.

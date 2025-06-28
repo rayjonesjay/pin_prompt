@@ -72,6 +72,9 @@ export default function ForumPage() {
 
   useEffect(() => {
     checkUser();
+    // Load dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
   }, []);
 
   useEffect(() => {
@@ -82,8 +85,10 @@ export default function ForumPage() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
   }, [darkMode]);
 
@@ -128,7 +133,7 @@ export default function ForumPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
           <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading forum...</p>
@@ -138,7 +143,7 @@ export default function ForumPage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
@@ -161,7 +166,7 @@ export default function ForumPage() {
               {!isAuthenticated && (
                 <Button
                   onClick={() => router.push('/')}
-                  className="bg-gradient-to-r from-green-600 to-green-700"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
@@ -189,7 +194,7 @@ export default function ForumPage() {
             {isAuthenticated && (
               <Button 
                 onClick={() => setShowCreatePost(true)}
-                className="mt-4 md:mt-0 bg-gradient-to-r from-green-600 to-green-700"
+                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-white"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 New Post
@@ -263,7 +268,7 @@ export default function ForumPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-gradient-to-r from-green-600 to-green-700' : ''}
+                  className={sortBy === 'recent' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
                 >
                   <Clock className="mr-1 h-4 w-4" />
                   Recent
@@ -272,7 +277,7 @@ export default function ForumPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-gradient-to-r from-orange-500 to-yellow-500' : ''}
+                  className={sortBy === 'trending' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -322,7 +327,7 @@ export default function ForumPage() {
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <Button onClick={handleCreatePost} className="bg-gradient-to-r from-green-600 to-green-700">Post</Button>
+                    <Button onClick={handleCreatePost} className="bg-green-600 hover:bg-green-700 text-white">Post</Button>
                     <Button variant="outline" onClick={() => setShowCreatePost(false)}>
                       Cancel
                     </Button>
@@ -342,11 +347,11 @@ export default function ForumPage() {
                   The forum feature is being developed. Database tables for forum posts and replies need to be created.
                 </p>
                 {isAuthenticated ? (
-                  <Button onClick={() => setShowCreatePost(true)} className="bg-gradient-to-r from-green-600 to-green-700">
+                  <Button onClick={() => setShowCreatePost(true)} className="bg-green-600 hover:bg-green-700 text-white">
                     Create First Post
                   </Button>
                 ) : (
-                  <Button onClick={() => router.push('/')} className="bg-gradient-to-r from-green-600 to-green-700">
+                  <Button onClick={() => router.push('/')} className="bg-green-600 hover:bg-green-700 text-white">
                     <LogIn className="mr-2 h-4 w-4" />
                     Sign In to Participate
                   </Button>

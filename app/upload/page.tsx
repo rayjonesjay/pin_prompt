@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Upload, Image, Video, FileText, Volume2 } from 'lucide-react';
+import { ArrowLeft, Upload, Image, Video, FileText, Volume2, Moon, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -26,13 +26,28 @@ export default function UploadPage() {
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
   const categories = ['ai', 'math', 'programming', 'sports', 'science', 'food', 'fashion', 'gaming', 'memes', 'general'];
 
   useEffect(() => {
     checkUser();
+    // Load dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
   }, []);
+
+  // Dark mode effect
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
+    }
+  }, [darkMode]);
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -121,32 +136,40 @@ export default function UploadPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'} p-4`}>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.push('/feed')}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Feed
-          </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Upload PinPrompt</h1>
-          <p className="text-gray-600 mt-2">Share your AI-generated content with the community</p>
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push('/feed')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Feed
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
+          <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Upload PinPrompt</h1>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-2`}>Share your AI-generated content with the community</p>
         </div>
 
-        <Card>
+        <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <CardHeader>
-            <CardTitle className="flex items-center">
+            <CardTitle className={`flex items-center ${darkMode ? 'text-white' : ''}`}>
               <Upload className="mr-2 h-5 w-5" />
               Create New PinPrompt
             </CardTitle>
@@ -155,7 +178,7 @@ export default function UploadPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Prompt Text */}
               <div className="space-y-2">
-                <Label htmlFor="prompt">Prompt *</Label>
+                <Label htmlFor="prompt" className={`${darkMode ? 'text-gray-200' : ''}`}>Prompt *</Label>
                 <Textarea
                   id="prompt"
                   placeholder="Enter the prompt you used to generate the content..."
@@ -163,25 +186,26 @@ export default function UploadPage() {
                   onChange={(e) => setPromptText(e.target.value)}
                   required
                   rows={4}
-                  className="resize-none"
+                  className={`resize-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                 />
               </div>
 
               {/* LLM Model */}
               <div className="space-y-2">
-                <Label htmlFor="model">LLM Model Used *</Label>
+                <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : ''}`}>LLM Model Used *</Label>
                 <Input
                   id="model"
                   placeholder="e.g., GPT-4, DALL-E 3, Midjourney, Claude, etc."
                   value={llmModel}
                   onChange={(e) => setLlmModel(e.target.value)}
                   required
+                  className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                 />
               </div>
 
               {/* Output Type */}
               <div className="space-y-2">
-                <Label>Output Type *</Label>
+                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Output Type *</Label>
                 <div className="grid grid-cols-4 gap-2">
                   {[
                     { type: 'image' as const, icon: Image, label: 'Image' },
@@ -194,7 +218,11 @@ export default function UploadPage() {
                       type="button"
                       variant={outputType === type ? 'default' : 'outline'}
                       onClick={() => setOutputType(type)}
-                      className="flex flex-col items-center p-4 h-auto"
+                      className={`flex flex-col items-center p-4 h-auto ${
+                        outputType === type 
+                          ? 'bg-green-600 hover:bg-green-700 text-white' 
+                          : `${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`
+                      }`}
                     >
                       <Icon className="h-6 w-6 mb-2" />
                       <span className="text-sm">{label}</span>
@@ -205,7 +233,7 @@ export default function UploadPage() {
 
               {/* Output Content */}
               <div className="space-y-2">
-                <Label>Output Content *</Label>
+                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Output Content *</Label>
                 {outputType === 'text' ? (
                   <Textarea
                     placeholder="Paste the text output generated by the AI..."
@@ -213,10 +241,10 @@ export default function UploadPage() {
                     onChange={(e) => setOutputText(e.target.value)}
                     required
                     rows={6}
-                    className="resize-none"
+                    className={`resize-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                   />
                 ) : (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <div className={`border-2 border-dashed ${darkMode ? 'border-gray-600' : 'border-gray-300'} rounded-lg p-6 text-center`}>
                     <Input
                       type="file"
                       accept={
@@ -231,11 +259,11 @@ export default function UploadPage() {
                     />
                     <Label htmlFor="file-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center">
-                        <Upload className="h-12 w-12 text-gray-400 mb-4" />
-                        <p className="text-lg font-medium text-gray-600">
+                        <Upload className={`h-12 w-12 ${darkMode ? 'text-gray-500' : 'text-gray-400'} mb-4`} />
+                        <p className={`text-lg font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                           Click to upload {outputType}
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                           {outputType === 'image' && 'PNG, JPG, GIF up to 10MB'}
                           {outputType === 'video' && 'MP4, MOV up to 50MB'}
                           {outputType === 'audio' && 'MP3, WAV up to 25MB'}
@@ -253,14 +281,14 @@ export default function UploadPage() {
 
               {/* Category */}
               <div className="space-y-2">
-                <Label>Category (Optional)</Label>
+                <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Category (Optional)</Label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
+                  <SelectTrigger className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : ''}`}>
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
+                      <SelectItem key={cat} value={cat} className={`${darkMode ? 'text-white hover:bg-gray-600' : ''}`}>
                         {cat.charAt(0).toUpperCase() + cat.slice(1)}
                       </SelectItem>
                     ))}
@@ -276,7 +304,7 @@ export default function UploadPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
                 disabled={loading}
               >
                 {loading ? 'Uploading...' : 'Share PinPrompt'}
