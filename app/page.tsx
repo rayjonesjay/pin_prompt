@@ -133,7 +133,7 @@ export default function LandingPage() {
             >
               <span className="text-base lg:text-lg">Bolt</span>
               <img 
-                src="/bolt_budge.png" 
+                src="/bolt.png"
                 alt="Bolt" 
                 className="w-12 h-12 lg:w-16 lg:h-16 object-contain"
               />
