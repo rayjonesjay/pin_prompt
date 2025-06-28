@@ -16,6 +16,13 @@ interface User {
   username: string;
 }
 
+interface LLMModel {
+  id: string;
+  name: string;
+  provider: string;
+  category: string;
+}
+
 export default function UploadPage() {
   const [user, setUser] = useState<User | null>(null);
   const [promptText, setPromptText] = useState('');
@@ -27,12 +34,15 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [llmModels, setLlmModels] = useState<LLMModel[]>([]);
+  const [loadingModels, setLoadingModels] = useState(true);
   const router = useRouter();
 
   const categories = ['ai', 'math', 'programming', 'sports', 'science', 'food', 'fashion', 'gaming', 'memes', 'general'];
 
   useEffect(() => {
     checkUser();
+    fetchLLMModels();
     // Load dark mode preference
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
@@ -64,6 +74,31 @@ export default function UploadPage() {
 
     if (userProfile) {
       setUser(userProfile);
+    }
+  };
+
+  const fetchLLMModels = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('llm_models')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+
+      if (error) throw error;
+      setLlmModels(data || []);
+    } catch (error) {
+      console.error('Error fetching LLM models:', error);
+      // Fallback to hardcoded list if database query fails
+      setLlmModels([
+        { id: '1', name: 'GPT-4', provider: 'OpenAI', category: 'text' },
+        { id: '2', name: 'DALL-E 3', provider: 'OpenAI', category: 'image' },
+        { id: '3', name: 'Claude 3 Opus', provider: 'Anthropic', category: 'text' },
+        { id: '4', name: 'Midjourney v6', provider: 'Midjourney', category: 'image' },
+        { id: '5', name: 'Stable Diffusion XL', provider: 'Stability AI', category: 'image' },
+      ]);
+    } finally {
+      setLoadingModels(false);
     }
   };
 
@@ -134,6 +169,15 @@ export default function UploadPage() {
     }
   };
 
+  // Filter models based on output type
+  const filteredModels = llmModels.filter(model => {
+    if (outputType === 'text') return model.category === 'text' || model.category === 'multimodal';
+    if (outputType === 'image') return model.category === 'image' || model.category === 'multimodal';
+    if (outputType === 'video') return model.category === 'video' || model.category === 'multimodal';
+    if (outputType === 'audio') return model.category === 'audio' || model.category === 'multimodal';
+    return true;
+  });
+
   if (!user) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
@@ -190,19 +234,6 @@ export default function UploadPage() {
                 />
               </div>
 
-              {/* LLM Model */}
-              <div className="space-y-2">
-                <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : ''}`}>LLM Model Used *</Label>
-                <Input
-                  id="model"
-                  placeholder="e.g., GPT-4, DALL-E 3, Midjourney, Claude, etc."
-                  value={llmModel}
-                  onChange={(e) => setLlmModel(e.target.value)}
-                  required
-                  className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
-                />
-              </div>
-
               {/* Output Type */}
               <div className="space-y-2">
                 <Label className={`${darkMode ? 'text-gray-200' : ''}`}>Output Type *</Label>
@@ -229,6 +260,39 @@ export default function UploadPage() {
                     </Button>
                   ))}
                 </div>
+              </div>
+
+              {/* LLM Model */}
+              <div className="space-y-2">
+                <Label htmlFor="model" className={`${darkMode ? 'text-gray-200' : ''}`}>LLM Model Used *</Label>
+                {loadingModels ? (
+                  <div className="flex items-center justify-center p-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                    <span className={`ml-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading models...</span>
+                  </div>
+                ) : (
+                  <Select value={llmModel} onValueChange={setLlmModel} required>
+                    <SelectTrigger className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
+                      <SelectValue placeholder="Select the AI model you used" />
+                    </SelectTrigger>
+                    <SelectContent className={`${darkMode ? 'bg-gray-700 border-gray-600' : ''}`}>
+                      {filteredModels.map((model) => (
+                        <SelectItem 
+                          key={model.id} 
+                          value={model.name}
+                          className={`${darkMode ? 'text-white hover:bg-gray-600' : ''}`}
+                        >
+                          <div className="flex flex-col">
+                            <span>{model.name}</span>
+                            <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {model.provider} • {model.category}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               {/* Output Content */}

@@ -115,6 +115,136 @@ export type Database = {
           created_at?: string;
         };
       };
+      comments: {
+        Row: {
+          id: string;
+          user_id: string;
+          prompt_id: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          prompt_id: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          prompt_id?: string;
+          content?: string;
+          created_at?: string;
+        };
+      };
+      llm_models: {
+        Row: {
+          id: string;
+          name: string;
+          provider: string;
+          category: string;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          provider: string;
+          category: string;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          provider?: string;
+          category?: string;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+      };
+      forum_posts: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          category: string;
+          is_pinned: boolean;
+          likes_count: number;
+          replies_count: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          content: string;
+          category: string;
+          is_pinned?: boolean;
+          likes_count?: number;
+          replies_count?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          content?: string;
+          category?: string;
+          is_pinned?: boolean;
+          likes_count?: number;
+          replies_count?: number;
+          created_at?: string;
+        };
+      };
+      forum_replies: {
+        Row: {
+          id: string;
+          user_id: string;
+          post_id: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          post_id: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          post_id?: string;
+          content?: string;
+          created_at?: string;
+        };
+      };
+      forum_likes: {
+        Row: {
+          id: string;
+          user_id: string;
+          post_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          post_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          post_id?: string;
+          created_at?: string;
+        };
+      };
     };
   };
 };
