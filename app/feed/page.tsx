@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,10 @@ import {
   X,
   Play,
   Pause,
-  Volume2
+  Volume2,
+  Moon,
+  Sun,
+  Filter
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -53,11 +56,35 @@ export default function FeedPage() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [modelFilter, setModelFilter] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'trending' | 'following'>('recent');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      if (user) {
+        fetchPrompts();
+      }
+    }, 300); // 300ms delay
+
+    setSearchTimeout(timeout);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [searchQuery, modelFilter]);
 
   useEffect(() => {
     checkUser();
@@ -67,7 +94,16 @@ export default function FeedPage() {
     if (user) {
       fetchPrompts();
     }
-  }, [user, sortBy, searchQuery]);
+  }, [user, sortBy]);
+
+  // Dark mode effect
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -109,7 +145,12 @@ export default function FeedPage() {
 
     // Apply search filter
     if (searchQuery) {
-      query = query.or(`prompt_text.ilike.%${searchQuery}%,llm_model.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+      query = query.or(`prompt_text.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+    }
+
+    // Apply model filter
+    if (modelFilter) {
+      query = query.ilike('llm_model', `%${modelFilter}%`);
     }
 
     // Apply sorting
@@ -166,8 +207,13 @@ export default function FeedPage() {
     setLoadingMore(false);
   };
 
-  const handleLike = async (promptId: string, isLiked: boolean) => {
+  const handleLike = async (promptId: string, isLiked: boolean, promptUserId: string) => {
     if (!user) return;
+
+    // Prevent users from liking their own posts
+    if (user.id === promptUserId) {
+      return;
+    }
 
     try {
       if (isLiked) {
@@ -232,21 +278,27 @@ export default function FeedPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadMore, loadingMore]);
 
+  // Get unique models for filter dropdown
+  const availableModels = useMemo(() => {
+    const models = new Set(prompts.map(p => p.llm_model));
+    return Array.from(models).sort();
+  }, [prompts]);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600">Loading your feed...</p>
+          <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your feed...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
       {/* Mobile Header */}
-      <div className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+      <div className={`lg:hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex items-center justify-between`}>
         <div className="flex items-center">
           <Button
             variant="ghost"
@@ -255,30 +307,49 @@ export default function FeedPage() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="ml-2 text-xl font-bold text-gray-900">PinPrompt</h1>
+          <h1 className={`ml-2 text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
         </div>
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={user?.avatar_url} />
-          <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
-        </Avatar>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setDarkMode(!darkMode)}
+          >
+            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user?.avatar_url} />
+            <AvatarFallback>{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </div>
       </div>
 
       <div className="flex">
         {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
           <div className="flex flex-col h-full">
             {/* Sidebar Header */}
-            <div className="p-6 border-b border-gray-200">
+            <div className={`p-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-b`}>
               <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">PinPrompt</h1>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSidebarOpen(false)}
-                  className="lg:hidden"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="hidden lg:flex"
+                  >
+                    {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(false)}
+                    className="lg:hidden"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
               {user && (
                 <div className="mt-4 flex items-center space-x-3">
@@ -287,8 +358,8 @@ export default function FeedPage() {
                     <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium text-gray-900">@{user.username}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>@{user.username}</p>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       {user.followers_count} followers
                     </p>
                   </div>
@@ -300,7 +371,7 @@ export default function FeedPage() {
             <nav className="flex-1 p-6 space-y-2">
               <Button
                 variant="ghost"
-                className="W-full justify-start"
+                className="w-full justify-start"
                 onClick={() => router.push('/upload')}
               >
                 <Upload className="mr-3 h-4 w-4" />
@@ -325,7 +396,7 @@ export default function FeedPage() {
             </nav>
 
             {/* Logout Button */}
-            <div className="p-6 border-t border-gray-200">
+            <div className={`p-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-t`}>
               <Button
                 variant="outline"
                 className="w-full"
@@ -354,11 +425,32 @@ export default function FeedPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search prompts, models, or categories..."
+                  placeholder="Search prompts, categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className={`pl-10 ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white'}`}
                 />
+              </div>
+
+              {/* Model Filter */}
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <select
+                  value={modelFilter}
+                  onChange={(e) => setModelFilter(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-md ${
+                    darkMode 
+                      ? 'bg-gray-800 border-gray-700 text-white' 
+                      : 'bg-white border-gray-300'
+                  }`}
+                >
+                  <option value="">All Models</option>
+                  {availableModels.map((model) => (
+                    <option key={model} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div className="flex space-x-2">
@@ -366,6 +458,7 @@ export default function FeedPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
+                  className={sortBy === 'recent' ? 'bg-gradient-to-r from-green-600 to-green-700' : ''}
                 >
                   Recent
                 </Button>
@@ -373,6 +466,7 @@ export default function FeedPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
+                  className={sortBy === 'trending' ? 'bg-gradient-to-r from-orange-500 to-yellow-500' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -381,6 +475,7 @@ export default function FeedPage() {
                   variant={sortBy === 'following' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('following')}
+                  className={sortBy === 'following' ? 'bg-gradient-to-r from-blue-500 to-purple-500' : ''}
                 >
                   Following
                 </Button>
@@ -390,34 +485,53 @@ export default function FeedPage() {
             {/* Feed */}
             <div className="space-y-6">
               {prompts.map((prompt) => (
-                <Card key={prompt.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
+                  prompt.category === 'ai' ? 'border-l-green-500' :
+                  prompt.category === 'programming' ? 'border-l-blue-500' :
+                  prompt.category === 'science' ? 'border-l-purple-500' :
+                  prompt.category === 'gaming' ? 'border-l-red-500' :
+                  'border-l-orange-500'
+                } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-sm'}`}>
                   <CardContent className="p-6">
                     {/* User Info */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 ring-2 ring-green-200">
                         <AvatarImage src={prompt.users.avatar_url} />
-                        <AvatarFallback>{prompt.users.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-gradient-to-br from-green-400 to-blue-500 text-white">
+                          {prompt.users.username[0]?.toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className="font-medium text-gray-900 hover:text-green-600 transition-colors"
+                          className={`font-medium ${darkMode ? 'text-white hover:text-green-400' : 'text-gray-900 hover:text-green-600'} transition-colors`}
                         >
                           @{prompt.users.username}
                         </button>
-                        <p className="text-sm text-gray-500">
+                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           {formatDistanceToNow(new Date(prompt.created_at), { addSuffix: true })}
                         </p>
                       </div>
                       {prompt.category && (
-                        <Badge variant="secondary">{prompt.category}</Badge>
+                        <Badge 
+                          variant="secondary" 
+                          className={`${
+                            prompt.category === 'ai' ? 'bg-green-100 text-green-800' :
+                            prompt.category === 'programming' ? 'bg-blue-100 text-blue-800' :
+                            prompt.category === 'science' ? 'bg-purple-100 text-purple-800' :
+                            prompt.category === 'gaming' ? 'bg-red-100 text-red-800' :
+                            'bg-orange-100 text-orange-800'
+                          }`}
+                        >
+                          {prompt.category}
+                        </Badge>
                       )}
                     </div>
 
                     {/* Prompt Text */}
                     <div className="mb-4">
-                      <h3 className="font-medium text-gray-900 mb-2">Prompt:</h3>
-                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+                      <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
+                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gradient-to-r from-gray-50 to-green-50'} p-3 rounded-lg border-l-2 border-green-400`}>
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -425,19 +539,19 @@ export default function FeedPage() {
                     {/* Output */}
                     {prompt.output_url && (
                       <div className="mb-4">
-                        <h3 className="font-medium text-gray-900 mb-2">Output:</h3>
+                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Output:</h3>
                         {prompt.output_type === 'image' && (
                           <img
                             src={prompt.output_url}
                             alt="AI Generated Output"
-                            className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                            className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity shadow-md"
                             onClick={() => window.open(prompt.output_url, '_blank')}
                           />
                         )}
                         {prompt.output_type === 'video' && (
                           <video
                             controls
-                            className="w-full rounded-lg"
+                            className="w-full rounded-lg shadow-md"
                             poster={prompt.output_url}
                           >
                             <source src={prompt.output_url} type="video/mp4" />
@@ -445,14 +559,14 @@ export default function FeedPage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <pre className="whitespace-pre-wrap text-sm text-gray-700">
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-yellow-50'} p-4 rounded-lg border border-yellow-200`}>
+                            <pre className={`whitespace-pre-wrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-50 to-blue-50'} p-4 rounded-lg border border-blue-200`}>
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.
@@ -464,24 +578,36 @@ export default function FeedPage() {
 
                     {/* Model Info */}
                     <div className="mb-4">
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className={`text-xs ${darkMode ? 'border-gray-600 text-gray-300' : 'border-gray-300'}`}>
                         {prompt.llm_model}
                       </Badge>
                     </div>
 
-                    <Separator className="my-4" />
+                    <Separator className={`my-4 ${darkMode ? 'bg-gray-700' : ''}`} />
 
                     {/* Actions */}
                     <div className="flex items-center justify-between">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleLike(prompt.id, prompt.is_liked || false)}
-                        className={`${prompt.is_liked ? 'text-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'} transition-colors`}
+                        onClick={() => handleLike(prompt.id, prompt.is_liked || false, prompt.user_id)}
+                        disabled={user?.id === prompt.user_id}
+                        className={`${
+                          user?.id === prompt.user_id 
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : prompt.is_liked 
+                              ? 'text-red-500 hover:text-red-600' 
+                              : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
+                        } transition-colors`}
                       >
                         <Heart className={`mr-1 h-4 w-4 ${prompt.is_liked ? 'fill-current' : ''}`} />
                         {prompt.likes_count}
                       </Button>
+                      {user?.id === prompt.user_id && (
+                        <Badge variant="secondary" className="text-xs">
+                          Your post
+                        </Badge>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -490,20 +616,20 @@ export default function FeedPage() {
               {loadingMore && (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-                  <p className="mt-2 text-gray-500">Loading more prompts...</p>
+                  <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading more prompts...</p>
                 </div>
               )}
 
               {!hasMore && prompts.length > 0 && (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">You've reached the end!</p>
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>You've reached the end!</p>
                 </div>
               )}
 
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">No prompts found.</p>
-                  <Button onClick={() => router.push('/upload')}>
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>No prompts found.</p>
+                  <Button onClick={() => router.push('/upload')} className="bg-gradient-to-r from-green-600 to-green-700">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
                   </Button>

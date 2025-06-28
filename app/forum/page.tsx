@@ -19,7 +19,9 @@ import {
   Users,
   Pin,
   Reply,
-  ThumbsUp
+  ThumbsUp,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
@@ -54,6 +56,7 @@ export default function ForumPage() {
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostCategory, setNewPostCategory] = useState('general');
+  const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
   const categories = [
@@ -74,6 +77,15 @@ export default function ForumPage() {
       fetchPosts();
     }
   }, [user, searchQuery, selectedCategory, sortBy]);
+
+  // Dark mode effect
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -197,43 +209,51 @@ export default function ForumPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600">Loading forum...</p>
+          <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading forum...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-green-50 to-yellow-50'}`}>
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.push('/feed')}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Feed
-          </Button>
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push('/feed')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Feed
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
           
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center mb-2">
+              <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center mb-2`}>
                 <MessageSquare className="h-8 w-8 mr-3 text-green-600" />
                 Community Forum
               </h1>
-              <p className="text-gray-600">
+              <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Discuss AI, share tips, and connect with fellow creators
               </p>
             </div>
             
             <Button 
               onClick={() => setShowCreatePost(true)}
-              className="mt-4 md:mt-0"
+              className="mt-4 md:mt-0 bg-gradient-to-r from-green-600 to-green-700"
             >
               <Plus className="mr-2 h-4 w-4" />
               New Post
@@ -244,9 +264,9 @@ export default function ForumPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="mb-6">
+            <Card className={`mb-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
               <CardHeader>
-                <CardTitle className="text-lg">Categories</CardTitle>
+                <CardTitle className={`text-lg ${darkMode ? 'text-white' : ''}`}>Categories</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {categories.map((category) => (
@@ -256,7 +276,7 @@ export default function ForumPage() {
                     className={`w-full text-left p-3 rounded-lg transition-colors ${
                       selectedCategory === category.id
                         ? 'bg-green-100 text-green-800 border border-green-200'
-                        : 'hover:bg-gray-100'
+                        : `${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100'}`
                     }`}
                   >
                     <div className={`w-3 h-3 rounded-full ${category.color} inline-block mr-2`}></div>
@@ -266,22 +286,22 @@ export default function ForumPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
               <CardHeader>
-                <CardTitle className="text-lg">Forum Stats</CardTitle>
+                <CardTitle className={`text-lg ${darkMode ? 'text-white' : ''}`}>Forum Stats</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Total Posts</span>
-                  <span className="font-semibold">{posts.length}</span>
+                  <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Posts</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>{posts.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Active Users</span>
-                  <span className="font-semibold">127</span>
+                  <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Active Users</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>127</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Total Replies</span>
-                  <span className="font-semibold">
+                  <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Replies</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : ''}`}>
                     {posts.reduce((sum, post) => sum + post.replies_count, 0)}
                   </span>
                 </div>
@@ -299,7 +319,7 @@ export default function ForumPage() {
                   placeholder="Search forum posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className={`pl-10 ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white'}`}
                 />
               </div>
               
@@ -308,6 +328,7 @@ export default function ForumPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
+                  className={sortBy === 'recent' ? 'bg-gradient-to-r from-green-600 to-green-700' : ''}
                 >
                   <Clock className="mr-1 h-4 w-4" />
                   Recent
@@ -316,6 +337,7 @@ export default function ForumPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
+                  className={sortBy === 'trending' ? 'bg-gradient-to-r from-orange-500 to-yellow-500' : ''}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -325,9 +347,9 @@ export default function ForumPage() {
 
             {/* Create Post Modal */}
             {showCreatePost && (
-              <Card className="mb-6 border-green-200">
+              <Card className={`mb-6 border-green-200 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
                 <CardHeader>
-                  <CardTitle>Create New Post</CardTitle>
+                  <CardTitle className={`${darkMode ? 'text-white' : ''}`}>Create New Post</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -335,13 +357,18 @@ export default function ForumPage() {
                       placeholder="Post title..."
                       value={newPostTitle}
                       onChange={(e) => setNewPostTitle(e.target.value)}
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                     />
                   </div>
                   <div>
                     <select
                       value={newPostCategory}
                       onChange={(e) => setNewPostCategory(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className={`w-full p-2 border rounded-md ${
+                        darkMode 
+                          ? 'bg-gray-700 border-gray-600 text-white' 
+                          : 'border-gray-300'
+                      }`}
                     >
                       {categories.slice(1).map((category) => (
                         <option key={category.id} value={category.id}>
@@ -356,10 +383,11 @@ export default function ForumPage() {
                       value={newPostContent}
                       onChange={(e) => setNewPostContent(e.target.value)}
                       rows={4}
+                      className={`${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <Button onClick={handleCreatePost}>Post</Button>
+                    <Button onClick={handleCreatePost} className="bg-gradient-to-r from-green-600 to-green-700">Post</Button>
                     <Button variant="outline" onClick={() => setShowCreatePost(false)}>
                       Cancel
                     </Button>
@@ -371,12 +399,16 @@ export default function ForumPage() {
             {/* Posts */}
             <div className="space-y-4">
               {posts.map((post) => (
-                <Card key={post.id} className={`hover:shadow-md transition-shadow ${post.is_pinned ? 'border-yellow-200 bg-yellow-50' : ''}`}>
+                <Card key={post.id} className={`hover:shadow-lg transition-all duration-300 ${
+                  post.is_pinned ? 'border-yellow-200 bg-gradient-to-r from-yellow-50 to-orange-50' : ''
+                } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 ring-2 ring-green-200">
                         <AvatarImage src={post.users.avatar_url} />
-                        <AvatarFallback>{post.users.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-gradient-to-br from-green-400 to-blue-500 text-white">
+                          {post.users.username[0]?.toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1">
@@ -384,19 +416,28 @@ export default function ForumPage() {
                           {post.is_pinned && (
                             <Pin className="h-4 w-4 text-yellow-600" />
                           )}
-                          <h3 className="font-semibold text-gray-900 hover:text-green-600 cursor-pointer">
+                          <h3 className={`font-semibold ${darkMode ? 'text-white hover:text-green-400' : 'text-gray-900 hover:text-green-600'} cursor-pointer transition-colors`}>
                             {post.title}
                           </h3>
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-xs ${
+                              post.category === 'announcements' ? 'bg-yellow-100 text-yellow-800' :
+                              post.category === 'prompt-engineering' ? 'bg-purple-100 text-purple-800' :
+                              post.category === 'llm-discussions' ? 'bg-green-100 text-green-800' :
+                              post.category === 'prompt-feedback' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}
+                          >
                             {categories.find(c => c.id === post.category)?.name}
                           </Badge>
                         </div>
                         
-                        <p className="text-gray-700 mb-3 line-clamp-2">
+                        <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 line-clamp-2`}>
                           {post.content}
                         </p>
                         
-                        <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className={`flex items-center justify-between text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           <div className="flex items-center space-x-4">
                             <span>by @{post.users.username}</span>
                             <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
@@ -421,16 +462,16 @@ export default function ForumPage() {
             </div>
 
             {posts.length === 0 && (
-              <Card>
+              <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
                 <CardContent className="p-12 text-center">
-                  <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">
+                  <MessageSquare className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
+                  <h3 className={`text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
                     No posts found
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
                     Be the first to start a discussion in this category
                   </p>
-                  <Button onClick={() => setShowCreatePost(true)}>
+                  <Button onClick={() => setShowCreatePost(true)} className="bg-gradient-to-r from-green-600 to-green-700">
                     Create First Post
                   </Button>
                 </CardContent>
