@@ -180,7 +180,7 @@ export default function UploadPage() {
             <Button
               variant="ghost"
               onClick={() => router.push('/feed')}
-              className="text-gray-600 hover:text-teal-600"
+              className="text-gray-600 hover:text-teal-600 hover:bg-teal-50"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Feed
@@ -228,10 +228,10 @@ export default function UploadPage() {
                       type="button"
                       variant={outputType === type ? 'default' : 'outline'}
                       onClick={() => setOutputType(type)}
-                      className={`flex flex-col items-center p-3 md:p-4 h-auto ${
+                      className={`flex flex-col items-center p-3 md:p-4 h-auto transition-all ${
                         outputType === type 
                           ? 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600' 
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                          : 'border-gray-300 text-gray-700 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600'
                       }`}
                     >
                       <Icon className="h-5 w-5 md:h-6 md:w-6 mb-2" />
@@ -259,7 +259,7 @@ export default function UploadPage() {
                         <SelectItem 
                           key={model.id} 
                           value={model.name}
-                          className="text-gray-900 hover:bg-teal-50 focus:bg-teal-50 data-[highlighted]:bg-teal-50"
+                          className="text-gray-900 hover:bg-teal-50 hover:text-teal-600 focus:bg-teal-50 focus:text-teal-600 data-[highlighted]:bg-teal-50 data-[highlighted]:text-teal-600"
                         >
                           <div className="flex flex-col">
                             <span>{model.name}</span>
@@ -334,7 +334,7 @@ export default function UploadPage() {
                       <SelectItem 
                         key={cat} 
                         value={cat} 
-                        className="text-gray-900 hover:bg-teal-50 focus:bg-teal-50 data-[highlighted]:bg-teal-50"
+                        className="text-gray-900 hover:bg-teal-50 hover:text-teal-600 focus:bg-teal-50 focus:text-teal-600 data-[highlighted]:bg-teal-50 data-[highlighted]:text-teal-600"
                       >
                         {cat.charAt(0).toUpperCase() + cat.slice(1)}
                       </SelectItem>
