@@ -132,13 +132,11 @@ export default function LandingPage() {
               className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
             >
               <span className="text-base lg:text-lg">Bolt</span>
-              <div 
-                className="w-12 h-12 lg:w-16 lg:h-16 bg-black rounded-2xl flex items-center justify-center"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10 L60 10 L45 50 L80 50 L40 90 L55 50 L20 50 Z' fill='white'/%3E%3C/svg%3E")`
-                }}
-              >
-              </div>
+              <img 
+                src="/bolt_budge.png" 
+                alt="Bolt" 
+                className="w-12 h-12 lg:w-16 lg:h-16 object-contain"
+              />
               <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5" />
             </a>
           </div>
