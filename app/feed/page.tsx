@@ -71,6 +71,37 @@ interface Prompt {
   comments_count?: number;
 }
 
+// Category color mapping
+const getCategoryColor = (category?: string) => {
+  switch (category) {
+    case 'ai': return 'border-l-teal-500';
+    case 'programming': return 'border-l-blue-500';
+    case 'science': return 'border-l-purple-500';
+    case 'gaming': return 'border-l-red-500';
+    case 'food': return 'border-l-green-500';
+    case 'fashion': return 'border-l-pink-500';
+    case 'math': return 'border-l-indigo-500';
+    case 'sports': return 'border-l-orange-500';
+    case 'memes': return 'border-l-yellow-500';
+    default: return 'border-l-gray-400';
+  }
+};
+
+const getCategoryBadgeColor = (category?: string) => {
+  switch (category) {
+    case 'ai': return 'bg-teal-100 text-teal-800';
+    case 'programming': return 'bg-blue-100 text-blue-800';
+    case 'science': return 'bg-purple-100 text-purple-800';
+    case 'gaming': return 'bg-red-100 text-red-800';
+    case 'food': return 'bg-green-100 text-green-800';
+    case 'fashion': return 'bg-pink-100 text-pink-800';
+    case 'math': return 'bg-indigo-100 text-indigo-800';
+    case 'sports': return 'bg-orange-100 text-orange-800';
+    case 'memes': return 'bg-yellow-100 text-yellow-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
+
 export default function FeedPage() {
   const [user, setUser] = useState<User | null>(null);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -709,13 +740,7 @@ export default function FeedPage() {
             {/* Feed */}
             <div className="space-y-6">
               {prompts.map((prompt) => (
-                <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
-                  prompt.category === 'ai' ? 'border-l-teal-600' :
-                  prompt.category === 'programming' ? 'border-l-blue-500' :
-                  prompt.category === 'science' ? 'border-l-purple-500' :
-                  prompt.category === 'gaming' ? 'border-l-red-500' :
-                  'border-l-yellow-500'
-                } bg-white border-gray-200`}>
+                <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${getCategoryColor(prompt.category)} bg-white border-gray-200`}>
                   <CardContent className="p-6">
                     {/* User Info */}
                     <div className="flex items-center space-x-3 mb-4">
@@ -728,7 +753,7 @@ export default function FeedPage() {
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className="font-medium text-gray-900 hover:text-teal-700 transition-colors"
+                          className="font-medium text-gray-900 hover:text-teal-700 transition-colors cursor-pointer"
                         >
                           @{prompt.users.username}
                         </button>
@@ -739,13 +764,7 @@ export default function FeedPage() {
                       {prompt.category && (
                         <Badge 
                           variant="secondary" 
-                          className={`${
-                            prompt.category === 'ai' ? 'bg-teal-100 text-teal-800' :
-                            prompt.category === 'programming' ? 'bg-blue-100 text-blue-800' :
-                            prompt.category === 'science' ? 'bg-purple-100 text-purple-800' :
-                            prompt.category === 'gaming' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}
+                          className={getCategoryBadgeColor(prompt.category)}
                         >
                           {prompt.category}
                         </Badge>
