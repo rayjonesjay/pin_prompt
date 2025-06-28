@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
+import { initializeDarkMode, setDarkMode } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -80,7 +81,7 @@ export default function FeedPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkModeState] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [newComments, setNewComments] = useState<Record<string, string>>({});
@@ -113,9 +114,9 @@ export default function FeedPage() {
 
   useEffect(() => {
     checkUser();
-    // Load dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(savedDarkMode);
+    // Initialize dark mode from localStorage
+    const savedDarkMode = initializeDarkMode();
+    setDarkModeState(savedDarkMode);
   }, []);
 
   useEffect(() => {
@@ -123,17 +124,6 @@ export default function FeedPage() {
       fetchPrompts();
     }
   }, [user, sortBy]);
-
-  // Dark mode effect
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
-  }, [darkMode]);
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -151,6 +141,12 @@ export default function FeedPage() {
     if (userProfile) {
       setUser(userProfile);
     }
+  };
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkModeState(newDarkMode);
+    setDarkMode(newDarkMode);
   };
 
   const fetchPrompts = async (offset = 0) => {
@@ -444,7 +440,7 @@ export default function FeedPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleDarkMode}
           >
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
@@ -522,7 +518,7 @@ export default function FeedPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setDarkMode(!darkMode)}
+                  onClick={toggleDarkMode}
                 >
                   {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 </Button>

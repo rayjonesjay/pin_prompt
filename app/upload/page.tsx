@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload, Image, Video, FileText, Volume2, Moon, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { initializeDarkMode, setDarkMode } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -33,7 +34,7 @@ export default function UploadPage() {
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkModeState] = useState(false);
   const [llmModels, setLlmModels] = useState<LLMModel[]>([]);
   const [loadingModels, setLoadingModels] = useState(true);
   const router = useRouter();
@@ -43,21 +44,16 @@ export default function UploadPage() {
   useEffect(() => {
     checkUser();
     fetchLLMModels();
-    // Load dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(savedDarkMode);
+    // Initialize dark mode from localStorage
+    const savedDarkMode = initializeDarkMode();
+    setDarkModeState(savedDarkMode);
   }, []);
 
-  // Dark mode effect
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
-  }, [darkMode]);
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkModeState(newDarkMode);
+    setDarkMode(newDarkMode);
+  };
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -202,7 +198,7 @@ export default function UploadPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={toggleDarkMode}
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>

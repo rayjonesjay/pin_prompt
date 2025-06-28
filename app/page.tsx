@@ -87,11 +87,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Brand and Features */}
-      <div className="w-full lg:w-1/2 bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-2 lg:order-1">
+      <div className="w-full lg:w-1/2 bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-orange-500 rounded-xl flex items-center justify-center mr-3 lg:mr-4">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 rounded-xl flex items-center justify-center mr-3 lg:mr-4">
               <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
             </div>
             <h1 className="text-2xl lg:text-3xl font-bold">PinPrompt</h1>
@@ -101,7 +101,7 @@ export default function LandingPage() {
           <div className="mb-12 lg:mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-orange-400">Creations</span>
+              <span className="text-green-400">Creations</span>
             </h2>
             <p className="text-lg lg:text-xl text-slate-300 mb-8 lg:mb-12 leading-relaxed">
               Discover, share, and learn from AI-generated content and the prompts that created them.<br className="hidden lg:block" />
@@ -111,26 +111,26 @@ export default function LandingPage() {
             {/* Feature Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-orange-400 font-semibold mb-2">Transparency</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Transparency</h3>
                 <p className="text-slate-300 text-sm">Real prompts, real results</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-orange-400 font-semibold mb-2">Community</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Community</h3>
                 <p className="text-slate-300 text-sm">Learn from others</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-orange-400 font-semibold mb-2">Discovery</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Discovery</h3>
                 <p className="text-slate-300 text-sm">Find new techniques</p>
               </div>
               <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-orange-400 font-semibold mb-2">Innovation</h3>
+                <h3 className="text-green-400 font-semibold mb-2">Innovation</h3>
                 <p className="text-slate-300 text-sm">Push AI boundaries</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer - Moved to bottom */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 text-slate-400">
           <div className="flex items-center space-x-2">
             <span className="text-sm">Built on</span>
@@ -138,7 +138,7 @@ export default function LandingPage() {
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-orange-400 hover:text-orange-300 transition-colors font-medium flex items-center space-x-1"
+              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
@@ -149,7 +149,7 @@ export default function LandingPage() {
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-orange-400 transition-colors"
+            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -158,7 +158,7 @@ export default function LandingPage() {
       </div>
 
       {/* Right Side - Authentication */}
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-1 lg:order-2">
+      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2">
         <div className="w-full max-w-md">
           <Card className="bg-white shadow-xl border-0">
             <CardContent className="p-6 lg:p-8">
@@ -169,8 +169,75 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              {/* Tab Buttons */}
-              <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+              <form onSubmit={handleAuth} className="space-y-4">
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Choose a unique username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
+                    {isSignUp ? 'Email' : 'Email or Username'}
+                  </Label>
+                  <Input
+                    id="email"
+                    type={isSignUp ? "email" : "text"}
+                    placeholder={isSignUp ? "Enter your email address" : "Enter your email or username"}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="border-gray-200 focus:border-green-500 focus:ring-green-500"
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
+                    {error}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 transition-colors font-medium"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Please wait...
+                    </div>
+                  ) : (
+                    isSignUp ? 'Sign Up' : 'Sign In'
+                  )}
+                </Button>
+              </form>
+
+              {/* Tab Buttons - Moved to bottom */}
+              <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setIsSignUp(false)}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -192,73 +259,6 @@ export default function LandingPage() {
                   Sign Up
                 </button>
               </div>
-
-              <form onSubmit={handleAuth} className="space-y-4">
-                {isSignUp && (
-                  <div className="space-y-2">
-                    <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Choose a unique username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
-                      className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
-                    {isSignUp ? 'Email' : 'Email or Username'}
-                  </Label>
-                  <Input
-                    id="email"
-                    type={isSignUp ? "email" : "text"}
-                    placeholder={isSignUp ? "Enter your email address" : "Enter your email or username"}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
-                  />
-                </div>
-
-                {error && (
-                  <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
-                    {error}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 transition-colors font-medium"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Please wait...
-                    </div>
-                  ) : (
-                    isSignUp ? 'Sign Up' : 'Sign In'
-                  )}
-                </Button>
-              </form>
 
               {isSignUp && (
                 <p className="text-xs text-gray-500 text-center mt-4">
