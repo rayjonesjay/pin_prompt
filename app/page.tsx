@@ -158,7 +158,7 @@ export default function LandingPage() {
       </div>
 
       {/* Right Side - Authentication */}
-      <div className="w-1/2 bg-gray-50 flex items-center justify-center p-12">
+      <div className="w-1/2 bg-white flex items-center justify-center p-12">
         <div className="w-full max-w-md">
           <Card className="bg-white shadow-xl border-0">
             <CardContent className="p-8">
