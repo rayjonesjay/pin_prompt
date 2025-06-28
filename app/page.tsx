@@ -86,8 +86,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Side - Brand and Features */}
-      <div className="w-full lg:w-1/2 bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
+      {/* Left Side - Brand and Features - Desktop Split Screen */}
+      <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
@@ -121,38 +121,38 @@ export default function LandingPage() {
                 The complete cycle of AI creativity in one platform
               </p>
             </div>
-
-            {/* Credits Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-slate-400">Built on</span>
-                <a 
-                  href="https://bolt.new/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
-                >
-                  <span>Bolt</span>
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
-              <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
-              <a 
-                href="https://github.com/rayjonesjay" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
-              >
-                <Github className="h-4 w-4" />
-                <span className="text-sm">rayjonesjay</span>
-              </a>
-            </div>
           </div>
+        </div>
+
+        {/* Footer - Credits Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-slate-400">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm">Built on</span>
+            <a 
+              href="https://bolt.new/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
+            >
+              <span>Bolt</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+          <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
+          <a 
+            href="https://github.com/rayjonesjay" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
+          >
+            <Github className="h-4 w-4" />
+            <span className="text-sm">rayjonesjay</span>
+          </a>
         </div>
       </div>
 
-      {/* Right Side - Authentication */}
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen lg:min-h-0">
+      {/* Right Side - Authentication - Desktop Split Screen */}
+      <div className="w-full lg:w-1/2 lg:ml-auto bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen">
         <div className="w-full max-w-md">
           <Card className="bg-white shadow-xl border-0">
             <CardContent className="p-6 lg:p-8">
