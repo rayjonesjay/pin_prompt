@@ -14,8 +14,6 @@ import {
   Calendar,
   Users,
   FileText,
-  Moon,
-  Sun,
   AlertTriangle
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -49,28 +47,13 @@ export default function ProfilePage() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
   const [deletingPrompt, setDeletingPrompt] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     checkUser();
-    // Load dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(savedDarkMode);
   }, []);
-
-  // Dark mode effect
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
-  }, [darkMode]);
 
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -132,10 +115,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
-          <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your profile...</p>
+          <p className="mt-4 text-gray-300">Loading your profile...</p>
         </div>
       </div>
     );
@@ -143,9 +126,9 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>User not found</p>
+          <p className="text-gray-300">User not found</p>
           <Button onClick={() => router.push('/')} className="mt-4">
             Go Home
           </Button>
@@ -155,7 +138,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-4xl mx-auto p-4 md:p-6">
         {/* Header */}
         <div className="mb-6 md:mb-8 flex items-center justify-between">
@@ -167,17 +150,10 @@ export default function ProfilePage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Feed
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
         </div>
 
         {/* Profile Header - Mobile Optimized */}
-        <Card className={`mb-6 md:mb-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-lg'} hover-lift`}>
+        <Card className="mb-6 md:mb-8 bg-gray-800 border-gray-700 shadow-lg hover-lift">
           <CardContent className="p-4 md:p-8">
             <div className="flex flex-col space-y-4">
               {/* Avatar and Basic Info */}
@@ -190,11 +166,11 @@ export default function ProfilePage() {
                 </Avatar>
                 
                 <div className="flex-1 min-w-0">
-                  <h1 className={`text-xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                  <h1 className="text-xl md:text-3xl font-bold text-white truncate">
                     @{user.username}
                   </h1>
                   {user.bio && (
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm md:text-base mt-1 md:mt-2`}>
+                    <p className="text-gray-300 text-sm md:text-base mt-1 md:mt-2">
                       {user.bio}
                     </p>
                   )}
@@ -202,7 +178,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Stats - Mobile Optimized */}
-              <div className={`flex items-center justify-between text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} pt-2 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex items-center justify-between text-xs md:text-sm text-gray-400 pt-2 border-t border-gray-700">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
                     <Users className="h-3 w-3 md:h-4 md:w-4 mr-1" />
@@ -225,28 +201,28 @@ export default function ProfilePage() {
 
         {/* Stats Cards - Mobile Optimized */}
         <div className="grid grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
-          <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
+          <Card className="bg-gray-800 border-gray-700 hover-lift">
             <CardContent className="p-3 md:p-6 text-center">
               <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {prompts.length}
               </div>
-              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>PinPrompts</div>
+              <div className="text-xs md:text-base text-gray-300">PinPrompts</div>
             </CardContent>
           </Card>
-          <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
+          <Card className="bg-gray-800 border-gray-700 hover-lift">
             <CardContent className="p-3 md:p-6 text-center">
               <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {prompts.reduce((sum, prompt) => sum + prompt.likes_count, 0)}
               </div>
-              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Likes</div>
+              <div className="text-xs md:text-base text-gray-300">Total Likes</div>
             </CardContent>
           </Card>
-          <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} hover-lift`}>
+          <Card className="bg-gray-800 border-gray-700 hover-lift">
             <CardContent className="p-3 md:p-6 text-center">
               <div className="text-xl md:text-3xl font-bold text-teal-600 mb-1 md:mb-2">
                 {user.followers_count}
               </div>
-              <div className={`text-xs md:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Followers</div>
+              <div className="text-xs md:text-base text-gray-300">Followers</div>
             </CardContent>
           </Card>
         </div>
@@ -254,7 +230,7 @@ export default function ProfilePage() {
         {/* Your PinPrompts */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6 space-y-2 sm:space-y-0">
-            <h2 className={`text-xl md:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center`}>
+            <h2 className="text-xl md:text-2xl font-bold text-white flex items-center">
               <FileText className="h-5 w-5 md:h-6 md:w-6 mr-2" />
               Your PinPrompts
             </h2>
@@ -270,13 +246,13 @@ export default function ProfilePage() {
           )}
 
           {prompts.length === 0 ? (
-            <Card className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+            <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-8 md:p-12 text-center">
-                <FileText className={`h-12 w-12 md:h-16 md:w-16 ${darkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-4`} />
-                <h3 className={`text-lg md:text-xl font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+                <FileText className="h-12 w-12 md:h-16 md:w-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-lg md:text-xl font-medium text-white mb-2">
                   No PinPrompts yet
                 </h3>
-                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6 text-sm md:text-base`}>
+                <p className="text-gray-400 mb-6 text-sm md:text-base">
                   Start sharing your AI-generated content with the community
                 </p>
                 <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white">
@@ -293,7 +269,7 @@ export default function ProfilePage() {
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
                   'border-l-yellow-500'
-                } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-sm'}`}>
+                } bg-gray-800 border-gray-700`}>
                   <CardContent className="p-4 md:p-6">
                     {/* Prompt Header */}
                     <div className="flex items-center justify-between mb-4">
@@ -310,7 +286,7 @@ export default function ProfilePage() {
                         >
                           {prompt.category || 'General'}
                         </Badge>
-                        <span className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <span className="text-xs md:text-sm text-gray-400">
                           {formatDistanceToNow(new Date(prompt.created_at), { addSuffix: true })}
                         </span>
                       </div>
@@ -359,8 +335,8 @@ export default function ProfilePage() {
 
                     {/* Prompt Text */}
                     <div className="mb-4">
-                      <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2 text-sm md:text-base`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-teal-400 text-sm md:text-base`}>
+                      <h3 className="font-medium text-white mb-2 text-sm md:text-base">Prompt:</h3>
+                      <p className="text-gray-300 bg-gray-700 p-3 rounded-lg border-l-2 border-teal-400 text-sm md:text-base">
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -368,7 +344,7 @@ export default function ProfilePage() {
                     {/* Output */}
                     {prompt.output_url && (
                       <div className="mb-4">
-                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2 text-sm md:text-base`}>Output:</h3>
+                        <h3 className="font-medium text-white mb-2 text-sm md:text-base">Output:</h3>
                         {prompt.output_type === 'image' && (
                           <img
                             src={prompt.output_url}
@@ -388,14 +364,14 @@ export default function ProfilePage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg max-w-2xl border border-gray-200`}>
-                            <pre className={`whitespace-pre-wrap text-xs md:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <div className="bg-gray-700 p-4 rounded-lg max-w-2xl border border-gray-200">
+                            <pre className="whitespace-pre-wrap text-xs md:text-sm text-gray-300">
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg max-w-md border border-gray-200`}>
+                          <div className="bg-gray-700 p-4 rounded-lg max-w-md border border-gray-200">
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.
@@ -407,16 +383,16 @@ export default function ProfilePage() {
 
                     {/* Model Info */}
                     <div className="mb-4">
-                      <Badge variant="outline" className={`text-xs ${darkMode ? 'border-gray-600 text-gray-300' : 'border-gray-300'}`}>
+                      <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
                         {prompt.llm_model}
                       </Badge>
                     </div>
 
-                    <Separator className={`my-4 ${darkMode ? 'bg-gray-700' : ''}`} />
+                    <Separator className="my-4 bg-gray-700" />
 
                     {/* Stats */}
                     <div className="flex items-center justify-between">
-                      <div className={`flex items-center ${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
+                      <div className="flex items-center text-gray-400 text-sm">
                         <Heart className="mr-1 h-4 w-4" />
                         {prompt.likes_count} likes
                       </div>

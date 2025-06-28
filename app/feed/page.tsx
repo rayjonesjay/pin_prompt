@@ -22,8 +22,6 @@ import {
   Play,
   Pause,
   Volume2,
-  Moon,
-  Sun,
   Filter,
   Send,
   MoreVertical,
@@ -32,7 +30,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
-import { initializeDarkMode, setDarkMode } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -81,7 +78,6 @@ export default function FeedPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [darkMode, setDarkModeState] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [newComments, setNewComments] = useState<Record<string, string>>({});
@@ -114,9 +110,6 @@ export default function FeedPage() {
 
   useEffect(() => {
     checkUser();
-    // Initialize dark mode from localStorage
-    const savedDarkMode = initializeDarkMode();
-    setDarkModeState(savedDarkMode);
   }, []);
 
   useEffect(() => {
@@ -158,12 +151,6 @@ export default function FeedPage() {
       console.error('Error checking user:', error);
       router.push('/');
     }
-  };
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkModeState(newDarkMode);
-    setDarkMode(newDarkMode);
   };
 
   const fetchPrompts = async (offset = 0) => {
@@ -449,30 +436,23 @@ export default function FeedPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
-          <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading your feed...</p>
+          <p className="mt-4 text-gray-300">Loading your feed...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen bg-gray-900">
       {/* Mobile Header */}
-      <div className={`lg:hidden ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex items-center justify-between`}>
+      <div className="lg:hidden bg-gray-800 border-gray-700 border-b p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
+          <h1 className="text-xl font-bold text-white">PinPrompt</h1>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleDarkMode}
-          >
-            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
           <div className="relative">
             <Button
               variant="ghost"
@@ -488,7 +468,7 @@ export default function FeedPage() {
             
             {/* Profile Menu Dropdown */}
             {showProfileMenu && (
-              <div className={`absolute right-0 top-full mt-2 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-lg z-50`}>
+              <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800 border-gray-700 border rounded-lg shadow-lg z-50">
                 <div className="p-4">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="relative">
@@ -515,8 +495,8 @@ export default function FeedPage() {
                       )}
                     </div>
                     <div>
-                      <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>@{user?.username}</p>
-                      <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <p className="font-medium text-white">@{user?.username}</p>
+                      <p className="text-sm text-gray-400">
                         {user?.followers_count} followers
                       </p>
                     </div>
@@ -538,19 +518,12 @@ export default function FeedPage() {
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <div className={`hidden lg:block fixed inset-y-0 left-0 z-50 w-64 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r`}>
+        <div className="hidden lg:block fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-gray-700 border-r">
           <div className="flex flex-col h-full">
             {/* Sidebar Header */}
-            <div className={`p-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-b`}>
+            <div className="p-6 border-gray-700 border-b">
               <div className="flex items-center justify-between">
-                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>PinPrompt</h1>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleDarkMode}
-                >
-                  {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                </Button>
+                <h1 className="text-2xl font-bold text-white">PinPrompt</h1>
               </div>
               {user && (
                 <div className="mt-4 flex items-center space-x-3">
@@ -578,8 +551,8 @@ export default function FeedPage() {
                     )}
                   </div>
                   <div>
-                    <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>@{user.username}</p>
-                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p className="font-medium text-white">@{user.username}</p>
+                    <p className="text-sm text-gray-400">
                       {user.followers_count} followers
                     </p>
                   </div>
@@ -616,7 +589,7 @@ export default function FeedPage() {
             </nav>
 
             {/* Logout Button */}
-            <div className={`p-6 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-t`}>
+            <div className="p-6 border-gray-700 border-t">
               <Button
                 variant="outline"
                 className="w-full"
@@ -640,7 +613,7 @@ export default function FeedPage() {
                   placeholder="Search prompts, categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`pl-10 ${darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white'}`}
+                  className="pl-10 bg-gray-800 border-gray-700 text-white"
                 />
               </div>
 
@@ -650,11 +623,7 @@ export default function FeedPage() {
                 <select
                   value={modelFilter}
                   onChange={(e) => setModelFilter(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-2 border rounded-md ${
-                    darkMode 
-                      ? 'bg-gray-800 border-gray-700 text-white' 
-                      : 'bg-white border-gray-300'
-                  }`}
+                  className="w-full pl-10 pr-4 py-2 border rounded-md bg-gray-800 border-gray-700 text-white"
                 >
                   <option value="">All Models</option>
                   {availableModels.map((model) => (
@@ -703,7 +672,7 @@ export default function FeedPage() {
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
                   'border-l-yellow-500'
-                } ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-sm'}`}>
+                } bg-gray-800 border-gray-700`}>
                   <CardContent className="p-6">
                     {/* User Info */}
                     <div className="flex items-center space-x-3 mb-4">
@@ -716,11 +685,11 @@ export default function FeedPage() {
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className={`font-medium ${darkMode ? 'text-white hover:text-teal-400' : 'text-gray-900 hover:text-teal-600'} transition-colors`}
+                          className="font-medium text-white hover:text-teal-400 transition-colors"
                         >
                           @{prompt.users.username}
                         </button>
-                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <p className="text-sm text-gray-400">
                           {formatDistanceToNow(new Date(prompt.created_at), { addSuffix: true })}
                         </p>
                       </div>
@@ -742,8 +711,8 @@ export default function FeedPage() {
 
                     {/* Prompt Text */}
                     <div className="mb-4">
-                      <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Prompt:</h3>
-                      <p className={`${darkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-700 bg-gray-50'} p-3 rounded-lg border-l-2 border-teal-400`}>
+                      <h3 className="font-medium text-white mb-2">Prompt:</h3>
+                      <p className="text-gray-300 bg-gray-700 p-3 rounded-lg border-l-2 border-teal-400">
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -751,7 +720,7 @@ export default function FeedPage() {
                     {/* Output */}
                     {prompt.output_url && (
                       <div className="mb-4">
-                        <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Output:</h3>
+                        <h3 className="font-medium text-white mb-2">Output:</h3>
                         {prompt.output_type === 'image' && (
                           <img
                             src={prompt.output_url}
@@ -771,14 +740,14 @@ export default function FeedPage() {
                           </video>
                         )}
                         {prompt.output_type === 'text' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg border border-gray-200`}>
-                            <pre className={`whitespace-pre-wrap text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <div className="bg-gray-700 p-4 rounded-lg border border-gray-200">
+                            <pre className="whitespace-pre-wrap text-sm text-gray-300">
                               {prompt.output_url}
                             </pre>
                           </div>
                         )}
                         {prompt.output_type === 'audio' && (
-                          <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg border border-gray-200`}>
+                          <div className="bg-gray-700 p-4 rounded-lg border border-gray-200">
                             <audio controls className="w-full">
                               <source src={prompt.output_url} type="audio/mpeg" />
                               Your browser does not support the audio element.
@@ -790,12 +759,12 @@ export default function FeedPage() {
 
                     {/* Model Info */}
                     <div className="mb-4">
-                      <Badge variant="outline" className={`text-xs ${darkMode ? 'border-gray-600 text-gray-300' : 'border-gray-300'}`}>
+                      <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
                         {prompt.llm_model}
                       </Badge>
                     </div>
 
-                    <Separator className={`my-4 ${darkMode ? 'bg-gray-700' : ''}`} />
+                    <Separator className="my-4 bg-gray-700" />
 
                     {/* Actions */}
                     <div className="flex items-center justify-between">
@@ -808,7 +777,7 @@ export default function FeedPage() {
                           className={`${
                             prompt.is_liked 
                               ? 'text-red-500 hover:text-red-600' 
-                              : `${darkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`
+                              : 'text-gray-400 hover:text-red-400'
                           } transition-colors`}
                         >
                           {likingPrompts.has(prompt.id) ? (
@@ -823,7 +792,7 @@ export default function FeedPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleComments(prompt.id)}
-                          className={`${darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-500'} transition-colors`}
+                          className="text-gray-400 hover:text-blue-400 transition-colors"
                         >
                           <MessageSquare className="mr-1 h-4 w-4" />
                           {prompt.comments_count || 0}
@@ -840,7 +809,7 @@ export default function FeedPage() {
                     {/* Comments Section */}
                     {expandedComments.has(prompt.id) && (
                       <div className="mt-4 space-y-4">
-                        <Separator className={`${darkMode ? 'bg-gray-700' : ''}`} />
+                        <Separator className="bg-gray-700" />
                         
                         {/* Comment Input */}
                         <div className="flex space-x-3">
@@ -853,7 +822,7 @@ export default function FeedPage() {
                               placeholder="Write a comment..."
                               value={newComments[prompt.id] || ''}
                               onChange={(e) => setNewComments(prev => ({ ...prev, [prompt.id]: e.target.value }))}
-                              className={`flex-1 min-h-[80px] ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                              className="flex-1 min-h-[80px] bg-gray-700 border-gray-600 text-white"
                               rows={2}
                             />
                             <Button
@@ -876,16 +845,16 @@ export default function FeedPage() {
                                 <AvatarFallback>{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
-                                <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-3`}>
+                                <div className="bg-gray-700 rounded-lg p-3">
                                   <div className="flex items-center space-x-2 mb-1">
-                                    <span className={`font-medium text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                    <span className="font-medium text-sm text-white">
                                       @{comment.users.username}
                                     </span>
-                                    <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    <span className="text-xs text-gray-400">
                                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                                     </span>
                                   </div>
-                                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                  <p className="text-sm text-gray-300">
                                     {comment.content}
                                   </p>
                                 </div>
@@ -902,19 +871,19 @@ export default function FeedPage() {
               {loadingMore && (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                  <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading more prompts...</p>
+                  <p className="mt-2 text-gray-400">Loading more prompts...</p>
                 </div>
               )}
 
               {!hasMore && prompts.length > 0 && (
                 <div className="text-center py-8">
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>You've reached the end!</p>
+                  <p className="text-gray-400">You've reached the end!</p>
                 </div>
               )}
 
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>No prompts found.</p>
+                  <p className="text-gray-400 mb-4">No prompts found.</p>
                   <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
@@ -927,7 +896,7 @@ export default function FeedPage() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className={`lg:hidden fixed bottom-0 left-0 right-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t`}>
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-gray-700 border-t">
         <div className="flex items-center justify-around py-2">
           <Button
             variant="ghost"

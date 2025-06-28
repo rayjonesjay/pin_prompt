@@ -85,7 +85,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-900">
       {/* Left Side - Brand and Features - Desktop Split Screen */}
       <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-slate-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
         {/* Header */}
@@ -152,13 +152,13 @@ export default function LandingPage() {
       </div>
 
       {/* Right Side - Authentication - Desktop Split Screen */}
-      <div className="w-full lg:w-1/2 lg:ml-auto bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen">
+      <div className="w-full lg:w-1/2 lg:ml-auto bg-gray-900 flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen">
         <div className="w-full max-w-md">
-          <Card className="bg-white shadow-xl border-0">
+          <Card className="bg-gray-800 border-gray-700 shadow-xl">
             <CardContent className="p-6 lg:p-8">
               <div className="text-center mb-6 lg:mb-8">
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
-                <p className="text-gray-600 text-sm lg:text-base">
+                <h2 className="text-xl lg:text-2xl font-bold text-white mb-2">Welcome</h2>
+                <p className="text-gray-400 text-sm lg:text-base">
                   Sign in to your account or create a new one
                 </p>
               </div>
@@ -166,7 +166,7 @@ export default function LandingPage() {
               <form onSubmit={handleAuth} className="space-y-4">
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
+                    <Label htmlFor="username" className="text-gray-300 text-sm font-medium">Username</Label>
                     <Input
                       id="username"
                       type="text"
@@ -174,13 +174,13 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
+                      className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
                     />
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
+                  <Label htmlFor="email" className="text-gray-300 text-sm font-medium">
                     {isSignUp ? 'Email' : 'Email or Username'}
                   </Label>
                   <Input
@@ -190,12 +190,12 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
+                  <Label htmlFor="password" className="text-gray-300 text-sm font-medium">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -204,12 +204,12 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-gray-700 border-gray-600 text-white focus:border-teal-500 focus:ring-teal-500"
                   />
                 </div>
 
                 {error && (
-                  <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
+                  <div className="text-red-400 text-sm text-center bg-red-900/20 p-3 rounded-md border border-red-800">
                     {error}
                   </div>
                 )}
@@ -231,13 +231,13 @@ export default function LandingPage() {
               </form>
 
               {/* Tab Buttons - Moved to bottom */}
-              <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
+              <div className="flex mt-6 bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setIsSignUp(false)}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                     !isSignUp 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-gray-800 text-white shadow-sm' 
+                      : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   Sign In
@@ -246,8 +246,8 @@ export default function LandingPage() {
                   onClick={() => setIsSignUp(true)}
                   className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                     isSignUp 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-gray-800 text-white shadow-sm' 
+                      : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   Sign Up
