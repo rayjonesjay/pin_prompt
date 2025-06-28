@@ -108,57 +108,51 @@ export default function LandingPage() {
               Join our community of creators pushing the boundaries of AI creativity.
             </p>
 
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Transparency</h3>
-                <p className="text-slate-300 text-sm">Real prompts, real results</p>
+            {/* Slogan Section */}
+            <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
+              <div className="flex items-center mb-4">
+                <Sparkles className="h-6 w-6 text-green-400 mr-3" />
+                <h3 className="text-green-400 font-semibold text-lg lg:text-xl">Our Mission</h3>
               </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Community</h3>
-                <p className="text-slate-300 text-sm">Learn from others</p>
+              <p className="text-2xl lg:text-3xl font-bold text-white leading-tight">
+                Prompt. Generate. Share. Inspire.
+              </p>
+              <p className="text-slate-300 mt-3 text-sm lg:text-base">
+                The complete cycle of AI creativity in one platform
+              </p>
+            </div>
+
+            {/* Credits Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-slate-400">Built on</span>
+                <a 
+                  href="https://bolt.new/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
+                >
+                  <span>Bolt</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Discovery</h3>
-                <p className="text-slate-300 text-sm">Find new techniques</p>
-              </div>
-              <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-4 lg:p-6">
-                <h3 className="text-green-400 font-semibold mb-2">Innovation</h3>
-                <p className="text-slate-300 text-sm">Push AI boundaries</p>
-              </div>
+              <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
+              <a 
+                href="https://github.com/rayjonesjay" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
+              >
+                <Github className="h-4 w-4" />
+                <span className="text-sm">rayjonesjay</span>
+              </a>
             </div>
           </div>
-        </div>
-
-        {/* Footer - Moved to bottom */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 text-slate-400">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">Built on</span>
-            <a 
-              href="https://bolt.new/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-green-400 hover:text-green-300 transition-colors font-medium flex items-center space-x-1"
-            >
-              <span>Bolt</span>
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-          <div className="w-1 h-1 bg-slate-600 rounded-full hidden sm:block"></div>
-          <a 
-            href="https://github.com/rayjonesjay" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-slate-400 hover:text-green-400 transition-colors"
-          >
-            <Github className="h-4 w-4" />
-            <span className="text-sm">rayjonesjay</span>
-          </a>
         </div>
       </div>
 
       {/* Right Side - Authentication */}
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2">
+      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 lg:p-12 order-2 lg:order-2 min-h-screen lg:min-h-0">
         <div className="w-full max-w-md">
           <Card className="bg-white shadow-xl border-0">
             <CardContent className="p-6 lg:p-8">
