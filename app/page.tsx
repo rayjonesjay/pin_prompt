@@ -211,12 +211,12 @@ export default function LandingPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
-                    Email or Username
+                    {isSignUp ? 'Email' : 'Email or Username'}
                   </Label>
                   <Input
                     id="email"
-                    type="email"
-                    placeholder="Enter your email or username"
+                    type={isSignUp ? "email" : "text"}
+                    placeholder={isSignUp ? "Enter your email address" : "Enter your email or username"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
