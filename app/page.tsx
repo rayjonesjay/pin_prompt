@@ -68,7 +68,7 @@ export default function LandingPage() {
           router.push('/feed');
         }
       } else {
-        // Sign in with email and password
+        // Sign in with email and password only
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -181,12 +181,12 @@ export default function LandingPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
-                    {isSignUp ? 'Email' : 'Email or Username'}
+                    Email
                   </Label>
                   <Input
                     id="email"
-                    type={isSignUp ? "email" : "text"}
-                    placeholder={isSignUp ? "Enter your email address" : "Enter your email or username"}
+                    type="email"
+                    placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
