@@ -87,12 +87,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-white">
       {/* Left Side - Brand and Features - Desktop Split Screen */}
-      <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-teal-600 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
+      <div className="w-full lg:w-1/2 lg:fixed lg:left-0 lg:top-0 lg:h-screen bg-teal-800 text-white p-6 lg:p-12 flex flex-col justify-between order-1 lg:order-1">
         {/* Header */}
         <div>
           <div className="flex items-center mb-8 lg:mb-12">
             <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center mr-3 lg:mr-4">
-              <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-teal-600" />
+              <Zap className="h-6 w-6 lg:h-7 lg:w-7 text-teal-800" />
             </div>
             <h1 className="text-2xl lg:text-3xl font-bold">PinPrompt</h1>
           </div>
@@ -101,7 +101,7 @@ export default function LandingPage() {
           <div className="mb-12 lg:mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Share Your AI<br />
-              <span className="text-teal-200">Creations</span>
+              <span className="text-teal-300">Creations</span>
             </h2>
             <p className="text-lg lg:text-xl text-teal-100 mb-8 lg:mb-12 leading-relaxed">
               Discover, share, and learn from AI-generated content and the prompts that created them.<br className="hidden lg:block" />
@@ -109,15 +109,15 @@ export default function LandingPage() {
             </p>
 
             {/* Slogan Section */}
-            <div className="bg-teal-700 border border-teal-500 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
+            <div className="bg-teal-900 border border-teal-600 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
               <div className="flex items-center mb-4">
-                <Sparkles className="h-6 w-6 text-teal-200 mr-3" />
-                <h3 className="text-teal-200 font-semibold text-lg lg:text-xl">Our Mission</h3>
+                <Sparkles className="h-6 w-6 text-teal-300 mr-3" />
+                <h3 className="text-teal-300 font-semibold text-lg lg:text-xl">Our Mission</h3>
               </div>
               <p className="text-2xl lg:text-3xl font-bold text-white leading-tight">
                 Prompt. Generate. Share. Inspire.
               </p>
-              <p className="text-teal-100 mt-3 text-sm lg:text-base">
+              <p className="text-teal-200 mt-3 text-sm lg:text-base">
                 The complete cycle of AI creativity in one platform
               </p>
             </div>
@@ -125,25 +125,25 @@ export default function LandingPage() {
         </div>
 
         {/* Footer - Credits Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-300">
           <div className="flex items-center space-x-2">
             <span className="text-sm">Built on</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-white hover:text-teal-100 transition-colors font-medium flex items-center space-x-1"
+              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-1"
             >
               <span>Bolt</span>
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
-          <div className="w-1 h-1 bg-teal-400 rounded-full hidden sm:block"></div>
+          <div className="w-1 h-1 bg-teal-500 rounded-full hidden sm:block"></div>
           <a 
             href="https://github.com/rayjonesjay" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-teal-200 hover:text-white transition-colors"
+            className="flex items-center space-x-2 text-teal-300 hover:text-white transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
@@ -174,7 +174,7 @@ export default function LandingPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                      className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                     />
                   </div>
                 )}
@@ -190,7 +190,7 @@ export default function LandingPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                   />
                 </div>
 
@@ -204,7 +204,7 @@ export default function LandingPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function LandingPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 transition-colors font-medium"
+                  className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 transition-colors font-medium"
                   disabled={loading}
                 >
                   {loading ? (

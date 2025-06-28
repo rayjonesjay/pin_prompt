@@ -456,7 +456,7 @@ export default function FeedPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-700"></div>
           <p className="mt-4 text-gray-600">Loading your feed...</p>
         </div>
       </div>
@@ -476,7 +476,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/messages')}
-            className="text-gray-600 hover:text-teal-600"
+            className="text-gray-600 hover:text-teal-700"
           >
             <Mail className="h-5 w-5" />
           </Button>
@@ -489,7 +489,7 @@ export default function FeedPage() {
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user?.avatar_url} />
-                <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="bg-teal-100 text-teal-800">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </Button>
             
@@ -501,9 +501,9 @@ export default function FeedPage() {
                     <div className="relative">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={user?.avatar_url} />
-                        <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-teal-100 text-teal-800">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <label className="absolute -bottom-1 -right-1 bg-teal-600 rounded-full p-1 cursor-pointer hover:bg-teal-700 transition-colors">
+                      <label className="absolute -bottom-1 -right-1 bg-teal-700 rounded-full p-1 cursor-pointer hover:bg-teal-800 transition-colors">
                         <Camera className="h-3 w-3 text-white" />
                         <input
                           type="file"
@@ -557,9 +557,9 @@ export default function FeedPage() {
                   <div className="relative">
                     <Avatar>
                       <AvatarImage src={user.avatar_url} />
-                      <AvatarFallback className="bg-teal-100 text-teal-700">{user.username[0]?.toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="bg-teal-100 text-teal-800">{user.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <label className="absolute -bottom-1 -right-1 bg-teal-600 rounded-full p-1 cursor-pointer hover:bg-teal-700 transition-colors">
+                    <label className="absolute -bottom-1 -right-1 bg-teal-700 rounded-full p-1 cursor-pointer hover:bg-teal-800 transition-colors">
                       <Camera className="h-3 w-3 text-white" />
                       <input
                         type="file"
@@ -591,7 +591,7 @@ export default function FeedPage() {
             <nav className="flex-1 p-6 space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
+                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
                 onClick={() => router.push('/upload')}
               >
                 <Upload className="mr-3 h-4 w-4" />
@@ -599,7 +599,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
+                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
                 onClick={() => router.push('/profile')}
               >
                 <User className="mr-3 h-4 w-4" />
@@ -607,7 +607,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
+                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
                 onClick={() => router.push('/messages')}
               >
                 <Mail className="mr-3 h-4 w-4" />
@@ -615,7 +615,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
+                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
                 onClick={() => router.push('/notifications')}
               >
                 <Bell className="mr-3 h-4 w-4" />
@@ -623,7 +623,7 @@ export default function FeedPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-700 hover:text-teal-600 hover:bg-teal-50"
+                className="w-full justify-start text-gray-700 hover:text-teal-700 hover:bg-teal-50"
                 onClick={() => router.push('/forum')}
               >
                 <MessageSquare className="mr-3 h-4 w-4" />
@@ -656,7 +656,7 @@ export default function FeedPage() {
                   placeholder="Search prompts, categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                  className="pl-10 bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                 />
               </div>
 
@@ -666,7 +666,7 @@ export default function FeedPage() {
                 <select
                   value={modelFilter}
                   onChange={(e) => setModelFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-md bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-md bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                 >
                   <option value="">All Models</option>
                   {availableModels.map((model) => (
@@ -682,7 +682,7 @@ export default function FeedPage() {
                   variant={sortBy === 'recent' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('recent')}
-                  className={sortBy === 'recent' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
+                  className={sortBy === 'recent' ? 'bg-teal-700 hover:bg-teal-800 text-white' : 'text-gray-700 hover:text-teal-700 hover:border-teal-400'}
                 >
                   Recent
                 </Button>
@@ -690,7 +690,7 @@ export default function FeedPage() {
                   variant={sortBy === 'trending' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('trending')}
-                  className={sortBy === 'trending' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
+                  className={sortBy === 'trending' ? 'bg-teal-700 hover:bg-teal-800 text-white' : 'text-gray-700 hover:text-teal-700 hover:border-teal-400'}
                 >
                   <TrendingUp className="mr-1 h-4 w-4" />
                   Trending
@@ -699,7 +699,7 @@ export default function FeedPage() {
                   variant={sortBy === 'following' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSortBy('following')}
-                  className={sortBy === 'following' ? 'bg-teal-600 hover:bg-teal-700 text-white' : 'text-gray-700 hover:text-teal-600 hover:border-teal-300'}
+                  className={sortBy === 'following' ? 'bg-teal-700 hover:bg-teal-800 text-white' : 'text-gray-700 hover:text-teal-700 hover:border-teal-400'}
                 >
                   Following
                 </Button>
@@ -710,7 +710,7 @@ export default function FeedPage() {
             <div className="space-y-6">
               {prompts.map((prompt) => (
                 <Card key={prompt.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 ${
-                  prompt.category === 'ai' ? 'border-l-teal-500' :
+                  prompt.category === 'ai' ? 'border-l-teal-600' :
                   prompt.category === 'programming' ? 'border-l-blue-500' :
                   prompt.category === 'science' ? 'border-l-purple-500' :
                   prompt.category === 'gaming' ? 'border-l-red-500' :
@@ -721,14 +721,14 @@ export default function FeedPage() {
                     <div className="flex items-center space-x-3 mb-4">
                       <Avatar className="h-10 w-10 ring-2 ring-teal-200">
                         <AvatarImage src={prompt.users.avatar_url} />
-                        <AvatarFallback className="bg-teal-100 text-teal-700">
+                        <AvatarFallback className="bg-teal-100 text-teal-800">
                           {prompt.users.username[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <button
                           onClick={() => router.push(`/profile/${prompt.users.username}`)}
-                          className="font-medium text-gray-900 hover:text-teal-600 transition-colors"
+                          className="font-medium text-gray-900 hover:text-teal-700 transition-colors"
                         >
                           @{prompt.users.username}
                         </button>
@@ -755,7 +755,7 @@ export default function FeedPage() {
                     {/* Prompt Text */}
                     <div className="mb-4">
                       <h3 className="font-medium text-gray-900 mb-2">Prompt:</h3>
-                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg border-l-2 border-teal-400">
+                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg border-l-2 border-teal-500">
                         {prompt.prompt_text}
                       </p>
                     </div>
@@ -858,21 +858,21 @@ export default function FeedPage() {
                         <div className="flex space-x-3">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={user?.avatar_url} />
-                            <AvatarFallback className="bg-teal-100 text-teal-700">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-teal-100 text-teal-800">{user?.username?.[0]?.toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 flex space-x-2">
                             <Textarea
                               placeholder="Write a comment..."
                               value={newComments[prompt.id] || ''}
                               onChange={(e) => setNewComments(prev => ({ ...prev, [prompt.id]: e.target.value }))}
-                              className="flex-1 min-h-[80px] bg-white border-gray-300 text-gray-900 focus:border-teal-500 focus:ring-teal-500"
+                              className="flex-1 min-h-[80px] bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
                               rows={2}
                             />
                             <Button
                               size="sm"
                               onClick={() => handleCommentSubmit(prompt.id)}
                               disabled={!newComments[prompt.id]?.trim() || submittingComment === prompt.id}
-                              className="bg-teal-600 hover:bg-teal-700 text-white"
+                              className="bg-teal-700 hover:bg-teal-800 text-white"
                             >
                               <Send className="h-4 w-4" />
                             </Button>
@@ -885,7 +885,7 @@ export default function FeedPage() {
                             <div key={comment.id} className="flex space-x-3">
                               <Avatar className="h-8 w-8">
                                 <AvatarImage src={comment.users.avatar_url} />
-                                <AvatarFallback className="bg-teal-100 text-teal-700">{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
+                                <AvatarFallback className="bg-teal-100 text-teal-800">{comment.users.username[0]?.toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
                                 <div className="bg-gray-50 rounded-lg p-3">
@@ -913,7 +913,7 @@ export default function FeedPage() {
 
               {loadingMore && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-700 mx-auto"></div>
                   <p className="mt-2 text-gray-600">Loading more prompts...</p>
                 </div>
               )}
@@ -927,7 +927,7 @@ export default function FeedPage() {
               {prompts.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <p className="text-gray-500 mb-4">No prompts found.</p>
-                  <Button onClick={() => router.push('/upload')} className="bg-teal-600 hover:bg-teal-700 text-white">
+                  <Button onClick={() => router.push('/upload')} className="bg-teal-700 hover:bg-teal-800 text-white">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload your first prompt
                   </Button>
@@ -945,7 +945,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/feed')}
-            className="flex flex-col items-center p-2 text-teal-600"
+            className="flex flex-col items-center p-2 text-teal-700"
           >
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Feed</span>
@@ -954,7 +954,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/upload')}
-            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-700"
           >
             <Upload className="h-5 w-5" />
             <span className="text-xs mt-1">Upload</span>
@@ -963,7 +963,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/messages')}
-            className="flex flex-col items-center p-2 relative text-gray-600 hover:text-teal-600"
+            className="flex flex-col items-center p-2 relative text-gray-600 hover:text-teal-700"
           >
             <Mail className="h-5 w-5" />
             <span className="text-xs mt-1">Messages</span>
@@ -972,7 +972,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/profile')}
-            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-700"
           >
             <User className="h-5 w-5" />
             <span className="text-xs mt-1">Profile</span>
@@ -981,7 +981,7 @@ export default function FeedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/forum')}
-            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-600"
+            className="flex flex-col items-center p-2 text-gray-600 hover:text-teal-700"
           >
             <MessageSquare className="h-5 w-5" />
             <span className="text-xs mt-1">Forum</span>
