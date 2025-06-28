@@ -108,16 +108,16 @@ export default function LandingPage() {
               Join our community of creators pushing the boundaries of AI creativity.
             </p>
 
-            {/* Slogan Section */}
-            <div className="bg-teal-900 border border-teal-600 rounded-xl p-6 lg:p-8 mb-8 lg:mb-12">
-              <div className="flex items-center mb-4">
-                <Sparkles className="h-6 w-6 text-teal-300 mr-3" />
-                <h3 className="text-teal-300 font-semibold text-lg lg:text-xl">Our Mission</h3>
+            {/* Slogan Section - Reduced size */}
+            <div className="bg-teal-900 border border-teal-600 rounded-xl p-4 lg:p-6 mb-8 lg:mb-12">
+              <div className="flex items-center mb-3">
+                <Sparkles className="h-5 w-5 text-teal-300 mr-2" />
+                <h3 className="text-teal-300 font-semibold text-base lg:text-lg">Our Mission</h3>
               </div>
-              <p className="text-2xl lg:text-3xl font-bold text-white leading-tight">
+              <p className="text-xl lg:text-2xl font-bold text-white leading-tight">
                 Prompt. Generate. Share. Inspire.
               </p>
-              <p className="text-teal-200 mt-3 text-sm lg:text-base">
+              <p className="text-teal-200 mt-2 text-xs lg:text-sm">
                 The complete cycle of AI creativity in one platform
               </p>
             </div>
@@ -126,18 +126,20 @@ export default function LandingPage() {
 
         {/* Footer - Credits Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-300">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <span className="text-sm">Built on</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-2"
+              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-3"
             >
               <span>Bolt</span>
-              <div className="w-6 h-6 bg-slate-700 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">bolt</span>
-              </div>
+              <img 
+                src="/bolt_budge.png" 
+                alt="Bolt" 
+                className="w-8 h-8 lg:w-10 lg:h-10"
+              />
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
