@@ -345,7 +345,11 @@ export default function LandingPage() {
                       <Checkbox
                         id="terms"
                         checked={acceptTerms}
-                        onCheckedChange={setAcceptTerms}
+                        onCheckedChange={(checked) => {
+                          if (typeof checked === 'boolean') {
+                            setAcceptTerms(checked);
+                          }
+                        }}
                         className="mt-1"
                       />
                       <div className="flex-1">
