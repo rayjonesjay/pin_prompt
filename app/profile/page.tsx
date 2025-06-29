@@ -181,7 +181,9 @@ export default function ProfilePage() {
           ? { 
               ...prompt, 
               prompt_text: finalPromptText,
-              category: editFormData.category === 'none' ? null : editFormData.category
+              // category: editFormData.category === 'none' ? null : editFormData.category
+              category: editFormData.category === 'none' ? undefined : editFormData.category
+
             }
           : prompt
       ));
