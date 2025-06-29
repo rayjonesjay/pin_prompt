@@ -68,7 +68,7 @@ interface Prompt {
   output_url?: string;
   output_type: 'image' | 'video' | 'text' | 'audio';
   llm_model: string;
-  category?: string;
+  category?: string | null; // Allow both undefined and null
   likes_count: number;
   created_at: string;
   users: User;
@@ -78,7 +78,7 @@ interface Prompt {
 }
 
 // Category color mapping
-const getCategoryColor = (category?: string) => {
+const getCategoryColor = (category?: string | null) => {
   switch (category) {
     case 'ai': return 'border-l-teal-500';
     case 'art': return 'border-l-pink-500';
@@ -96,7 +96,7 @@ const getCategoryColor = (category?: string) => {
   }
 };
 
-const getCategoryBadgeColor = (category?: string) => {
+const getCategoryBadgeColor = (category?: string | null) => {
   switch (category) {
     case 'ai': return 'bg-teal-100 text-teal-800';
     case 'art': return 'bg-pink-100 text-pink-800';
@@ -551,14 +551,14 @@ export default function FeedPage() {
 
       if (error) throw error;
 
-      // Update local state
+      // Update local state with proper type handling
       setPrompts(prev => prev.map(prompt => 
         prompt.id === promptId 
           ? { 
               ...prompt, 
               prompt_text: finalPromptText,
               category: editFormData.category === 'none' ? null : editFormData.category
-            }
+            } as Prompt // Explicit type assertion to ensure compatibility
           : prompt
       ));
 
