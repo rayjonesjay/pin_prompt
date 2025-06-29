@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Upload, Image, Video, FileText, Volume2, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Upload, Image, Video, FileText, Volume2, Search, ChevronDown, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -25,6 +25,7 @@ interface LLMModel {
 
 export default function UploadPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [userThoughts, setUserThoughts] = useState('');
   const [promptText, setPromptText] = useState('');
   const [outputType, setOutputType] = useState<'image' | 'video' | 'text' | 'audio'>('image');
   const [outputFile, setOutputFile] = useState<File | null>(null);
@@ -133,12 +134,17 @@ export default function UploadPage() {
         outputUrl = await uploadFile(outputFile);
       }
 
+      // Combine user thoughts with prompt text if thoughts are provided
+      const finalPromptText = userThoughts.trim() 
+        ? `${userThoughts.trim()}\n\n--- AI Prompt ---\n${promptText}`
+        : promptText;
+
       const { error: insertError } = await supabase
         .from('prompts')
         .insert([
           {
             user_id: user.id,
-            prompt_text: promptText,
+            prompt_text: finalPromptText,
             output_url: outputUrl,
             output_type: outputType,
             llm_model: llmModel,
@@ -200,6 +206,15 @@ export default function UploadPage() {
 
   const selectedModel = llmModels.find(model => model.name === llmModel);
 
+  // Word count helpers
+  const getWordCount = (text: string) => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
+  const thoughtsWordCount = getWordCount(userThoughts);
+  const promptWordCount = getWordCount(promptText);
+  const outputTextWordCount = getWordCount(outputText);
+
   if (!user) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -236,18 +251,60 @@ export default function UploadPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Your Thoughts Section */}
+              <div className="space-y-2">
+                <Label htmlFor="thoughts" className="text-gray-700 font-medium flex items-center">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Your Thoughts (Optional)
+                </Label>
+                <Textarea
+                  id="thoughts"
+                  placeholder="Share your thoughts about this creation, the process, what inspired you, or anything you'd like the community to know..."
+                  value={userThoughts}
+                  onChange={(e) => {
+                    const words = getWordCount(e.target.value);
+                    if (words <= 200) {
+                      setUserThoughts(e.target.value);
+                    }
+                  }}
+                  rows={3}
+                  className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
+                />
+                <div className="flex justify-between items-center text-xs">
+                  <p className="text-gray-500">
+                    Share your creative process, inspiration, or insights about this AI generation
+                  </p>
+                  <p className={`font-medium ${thoughtsWordCount > 180 ? 'text-orange-600' : thoughtsWordCount > 200 ? 'text-red-600' : 'text-gray-500'}`}>
+                    {thoughtsWordCount}/200 words
+                  </p>
+                </div>
+              </div>
+
               {/* Prompt Text */}
               <div className="space-y-2">
-                <Label htmlFor="prompt" className="text-gray-700 font-medium">Prompt *</Label>
+                <Label htmlFor="prompt" className="text-gray-700 font-medium">AI Prompt *</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="Enter the prompt you used to generate the content..."
+                  placeholder="Enter the exact prompt you used to generate the content..."
                   value={promptText}
-                  onChange={(e) => setPromptText(e.target.value)}
+                  onChange={(e) => {
+                    const words = getWordCount(e.target.value);
+                    if (words <= 200) {
+                      setPromptText(e.target.value);
+                    }
+                  }}
                   required
                   rows={4}
                   className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
                 />
+                <div className="flex justify-between items-center text-xs">
+                  <p className="text-gray-500">
+                    The exact prompt/instructions you gave to the AI model
+                  </p>
+                  <p className={`font-medium ${promptWordCount > 180 ? 'text-orange-600' : promptWordCount > 200 ? 'text-red-600' : 'text-gray-500'}`}>
+                    {promptWordCount}/200 words
+                  </p>
+                </div>
               </div>
 
               {/* Output Type */}
@@ -398,14 +455,29 @@ export default function UploadPage() {
               <div className="space-y-2">
                 <Label className="text-gray-700 font-medium">Output Content *</Label>
                 {outputType === 'text' ? (
-                  <Textarea
-                    placeholder="Paste the text output generated by the AI..."
-                    value={outputText}
-                    onChange={(e) => setOutputText(e.target.value)}
-                    required
-                    rows={6}
-                    className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
-                  />
+                  <>
+                    <Textarea
+                      placeholder="Paste the text output generated by the AI..."
+                      value={outputText}
+                      onChange={(e) => {
+                        const words = getWordCount(e.target.value);
+                        if (words <= 200) {
+                          setOutputText(e.target.value);
+                        }
+                      }}
+                      required
+                      rows={6}
+                      className="resize-none bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                    <div className="flex justify-between items-center text-xs">
+                      <p className="text-gray-500">
+                        The text content generated by the AI model
+                      </p>
+                      <p className={`font-medium ${outputTextWordCount > 180 ? 'text-orange-600' : outputTextWordCount > 200 ? 'text-red-600' : 'text-gray-500'}`}>
+                        {outputTextWordCount}/200 words
+                      </p>
+                    </div>
+                  </>
                 ) : (
                   <div className="border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-6 text-center hover:border-teal-400 transition-colors">
                     <Input
