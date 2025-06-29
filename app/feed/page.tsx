@@ -735,7 +735,7 @@ export default function FeedPage() {
                 onClick={() => router.push('/profile')}
               >
                 <User className="mr-3 h-4 w-4" />
-                Your PinPrompts
+                Profile
               </Button>
               <div className="relative">
                 <Button
