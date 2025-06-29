@@ -55,7 +55,7 @@ Before you begin, ensure you have:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/pinprompt.git
+git clone https://github.com/yourusername/pin_prompt.git
 cd pinprompt
 ```
 
