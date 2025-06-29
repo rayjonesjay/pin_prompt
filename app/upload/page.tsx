@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Upload, Image, Video, FileText, Volume2 } from 'lucide-react';
+import { ArrowLeft, Upload, Image, Video, FileText, Volume2, Search, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -35,6 +35,9 @@ export default function UploadPage() {
   const [error, setError] = useState('');
   const [llmModels, setLlmModels] = useState<LLMModel[]>([]);
   const [loadingModels, setLoadingModels] = useState(true);
+  const [modelSearchQuery, setModelSearchQuery] = useState('');
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [displayedModelsCount, setDisplayedModelsCount] = useState(20);
   const router = useRouter();
 
   const categories = ['ai', 'math', 'programming', 'sports', 'science', 'food', 'fashion', 'gaming', 'memes', 'general'];
@@ -68,7 +71,7 @@ export default function UploadPage() {
         .from('llm_models')
         .select('*')
         .eq('is_active', true)
-        .order('sort_order');
+        .order('name');
 
       if (error) throw error;
       setLlmModels(data || []);
@@ -154,14 +157,48 @@ export default function UploadPage() {
     }
   };
 
-  // Filter models based on output type
-  const filteredModels = llmModels.filter(model => {
-    if (outputType === 'text') return model.category === 'text' || model.category === 'multimodal';
-    if (outputType === 'image') return model.category === 'image' || model.category === 'multimodal';
-    if (outputType === 'video') return model.category === 'video' || model.category === 'multimodal';
-    if (outputType === 'audio') return model.category === 'audio' || model.category === 'multimodal';
-    return true;
-  });
+  // Filter and sort models based on output type and search query
+  const filteredAndSortedModels = useMemo(() => {
+    let filtered = llmModels.filter(model => {
+      // Filter by output type
+      const typeMatch = outputType === 'text' 
+        ? model.category === 'text' || model.category === 'multimodal'
+        : outputType === 'image' 
+        ? model.category === 'image' || model.category === 'multimodal'
+        : outputType === 'video' 
+        ? model.category === 'video' || model.category === 'multimodal'
+        : outputType === 'audio' 
+        ? model.category === 'audio' || model.category === 'multimodal'
+        : true;
+
+      // Filter by search query
+      const searchMatch = !modelSearchQuery || 
+        model.name.toLowerCase().includes(modelSearchQuery.toLowerCase()) ||
+        model.provider.toLowerCase().includes(modelSearchQuery.toLowerCase());
+
+      return typeMatch && searchMatch;
+    });
+
+    // Sort alphabetically by name
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }, [llmModels, outputType, modelSearchQuery]);
+
+  // Get displayed models with lazy loading
+  const displayedModels = filteredAndSortedModels.slice(0, displayedModelsCount);
+  const hasMoreModels = displayedModelsCount < filteredAndSortedModels.length;
+
+  const loadMoreModels = () => {
+    setDisplayedModelsCount(prev => prev + 20);
+  };
+
+  const handleModelSelect = (modelName: string) => {
+    setLlmModel(modelName);
+    setShowModelDropdown(false);
+    setModelSearchQuery('');
+    setDisplayedModelsCount(20);
+  };
+
+  const selectedModel = llmModels.find(model => model.name === llmModel);
 
   if (!user) {
     return (
@@ -227,7 +264,12 @@ export default function UploadPage() {
                       key={type}
                       type="button"
                       variant={outputType === type ? 'default' : 'outline'}
-                      onClick={() => setOutputType(type)}
+                      onClick={() => {
+                        setOutputType(type);
+                        setLlmModel(''); // Reset model selection when output type changes
+                        setModelSearchQuery('');
+                        setDisplayedModelsCount(20);
+                      }}
                       className={`flex flex-col items-center p-3 md:p-4 h-auto transition-all ${
                         outputType === type 
                           ? 'bg-teal-600 hover:bg-teal-700 text-white border-teal-600' 
@@ -241,36 +283,114 @@ export default function UploadPage() {
                 </div>
               </div>
 
-              {/* LLM Model */}
+              {/* LLM Model - Custom Searchable Dropdown */}
               <div className="space-y-2">
                 <Label htmlFor="model" className="text-gray-700 font-medium">LLM Model Used *</Label>
                 {loadingModels ? (
-                  <div className="flex items-center justify-center p-4">
+                  <div className="flex items-center justify-center p-4 border border-gray-300 rounded-md bg-white">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
                     <span className="ml-2 text-gray-600">Loading models...</span>
                   </div>
                 ) : (
-                  <Select value={llmModel} onValueChange={setLlmModel} required>
-                    <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-teal-500 focus:border-teal-500">
-                      <SelectValue placeholder="Select the AI model you used" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-300">
-                      {filteredModels.map((model) => (
-                        <SelectItem 
-                          key={model.id} 
-                          value={model.name}
-                          className="text-gray-900 hover:bg-teal-50 hover:text-teal-600 focus:bg-teal-50 focus:text-teal-600 data-[highlighted]:bg-teal-50 data-[highlighted]:text-teal-600"
-                        >
-                          <div className="flex flex-col">
-                            <span>{model.name}</span>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowModelDropdown(!showModelDropdown)}
+                      className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-md bg-white text-gray-900 hover:border-teal-500 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors"
+                    >
+                      <span className={selectedModel ? 'text-gray-900' : 'text-gray-500'}>
+                        {selectedModel ? (
+                          <div className="flex flex-col items-start">
+                            <span>{selectedModel.name}</span>
                             <span className="text-xs text-gray-500">
-                              {model.provider} • {model.category}
+                              {selectedModel.provider} • {selectedModel.category}
                             </span>
                           </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        ) : (
+                          'Select the AI model you used'
+                        )}
+                      </span>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${showModelDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {showModelDropdown && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-hidden">
+                        {/* Search Input */}
+                        <div className="p-3 border-b border-gray-200">
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Input
+                              placeholder="Search models..."
+                              value={modelSearchQuery}
+                              onChange={(e) => {
+                                setModelSearchQuery(e.target.value);
+                                setDisplayedModelsCount(20); // Reset count when searching
+                              }}
+                              className="pl-10 bg-white border-gray-300 text-gray-900 focus:ring-teal-500 focus:border-teal-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Models List */}
+                        <div className="max-h-60 overflow-y-auto">
+                          {displayedModels.length === 0 ? (
+                            <div className="p-4 text-center text-gray-500">
+                              No models found for "{modelSearchQuery}" in {outputType} category
+                            </div>
+                          ) : (
+                            <>
+                              {displayedModels.map((model) => (
+                                <button
+                                  key={model.id}
+                                  type="button"
+                                  onClick={() => handleModelSelect(model.name)}
+                                  className="w-full text-left p-3 hover:bg-teal-50 hover:text-teal-600 focus:bg-teal-50 focus:text-teal-600 transition-colors border-b border-gray-100 last:border-b-0"
+                                >
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{model.name}</span>
+                                    <span className="text-xs text-gray-500">
+                                      {model.provider} • {model.category}
+                                    </span>
+                                  </div>
+                                </button>
+                              ))}
+                              
+                              {/* Load More Button */}
+                              {hasMoreModels && (
+                                <button
+                                  type="button"
+                                  onClick={loadMoreModels}
+                                  className="w-full p-3 text-center text-teal-600 hover:bg-teal-50 border-t border-gray-200 font-medium"
+                                >
+                                  Load more models... ({filteredAndSortedModels.length - displayedModelsCount} remaining)
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Click outside to close */}
+                    {showModelDropdown && (
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => {
+                          setShowModelDropdown(false);
+                          setModelSearchQuery('');
+                          setDisplayedModelsCount(20);
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+                
+                {/* Model count info */}
+                {!loadingModels && (
+                  <p className="text-xs text-gray-500">
+                    {filteredAndSortedModels.length} models available for {outputType} content
+                    {modelSearchQuery && ` (filtered by "${modelSearchQuery}")`}
+                  </p>
                 )}
               </div>
 
@@ -352,7 +472,7 @@ export default function UploadPage() {
               <Button
                 type="submit"
                 className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 font-medium text-base"
-                disabled={loading}
+                disabled={loading || !llmModel}
               >
                 {loading ? (
                   <div className="flex items-center">
