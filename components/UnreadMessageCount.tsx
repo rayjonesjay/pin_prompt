@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Badge } from '@/components/ui/badge';
 
@@ -10,6 +10,24 @@ interface User {
 
 export default function UnreadMessageCount({ user }: { user: User | null }) {
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const { count, error } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', user.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+
+      setUnreadCount(count || 0);
+    } catch (error) {
+      console.error('Error fetching unread message count:', error);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -40,25 +58,7 @@ export default function UnreadMessageCount({ user }: { user: User | null }) {
         subscription.unsubscribe();
       };
     }
-  }, [user]);
-
-  const fetchUnreadCount = async () => {
-    if (!user) return;
-
-    try {
-      const { count, error } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('receiver_id', user.id)
-        .eq('is_read', false);
-
-      if (error) throw error;
-
-      setUnreadCount(count || 0);
-    } catch (error) {
-      console.error('Error fetching unread message count:', error);
-    }
-  };
+  }, [user, fetchUnreadCount]);
 
   if (unreadCount === 0) return null;
 

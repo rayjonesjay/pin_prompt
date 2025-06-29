@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ExternalLink, Github, Sparkles, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function LandingPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -127,7 +128,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">2. Server Usage & Fair Use</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">2. Server Usage &amp; Fair Use</h3>
               <ul className="space-y-1 ml-4">
                 <li>• <strong>No server overloading:</strong> Avoid making excessive requests that could impact service performance</li>
                 <li>• <strong>Rate limits:</strong> Respect API rate limits and upload quotas</li>
@@ -141,7 +142,7 @@ export default function LandingPage() {
               <h3 className="font-semibold text-gray-900 mb-2">3. Community Standards</h3>
               <ul className="space-y-1 ml-4">
                 <li>• <strong>Be respectful:</strong> Treat other users with kindness and respect</li>
-                <li>• <strong>No impersonation:</strong> Don't pretend to be someone else</li>
+                <li>• <strong>No impersonation:</strong> Don&apos;t pretend to be someone else</li>
                 <li>• <strong>Accurate information:</strong> Provide truthful information about your AI-generated content</li>
                 <li>• <strong>Report violations:</strong> Help us maintain a safe community by reporting inappropriate content</li>
               </ul>
@@ -168,7 +169,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">6. Privacy & Data</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">6. Privacy &amp; Data</h3>
               <ul className="space-y-1 ml-4">
                 <li>• <strong>Data collection:</strong> We collect minimal data necessary for service operation</li>
                 <li>• <strong>Content ownership:</strong> You retain rights to your original content</li>
@@ -260,9 +261,11 @@ export default function LandingPage() {
               className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
             >
               <span className="text-base lg:text-lg">Bolt.new</span>
-              <img 
+              <Image 
                 src="/bolt_budge.png"
                 alt="Bolt" 
+                width={80}
+                height={80}
                 className="w-16 h-16 lg:w-20 lg:h-20 object-contain"
               />
               <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5" />

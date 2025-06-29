@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 interface User {
   id: string;
@@ -55,17 +56,7 @@ export default function UserProfilePage() {
   const params = useParams();
   const username = params.username as string;
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  useEffect(() => {
-    if (currentUser && username) {
-      fetchProfileUser();
-    }
-  }, [currentUser, username]);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) {
       router.push('/');
@@ -81,9 +72,9 @@ export default function UserProfilePage() {
     if (userProfile) {
       setCurrentUser(userProfile);
     }
-  };
+  }, [router]);
 
-  const fetchProfileUser = async () => {
+  const fetchProfileUser = useCallback(async () => {
     try {
       // Get profile user by username
       const { data: userProfile, error: userError } = await supabase
@@ -125,7 +116,17 @@ export default function UserProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser, username]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  useEffect(() => {
+    if (currentUser && username) {
+      fetchProfileUser();
+    }
+  }, [currentUser, username, fetchProfileUser]);
 
   const handleFollow = async () => {
     if (!currentUser || !profileUser || currentUser.id === profileUser.id) return;
@@ -434,9 +435,11 @@ export default function UserProfilePage() {
                       <div className="mb-4">
                         <h3 className="font-medium text-gray-900 mb-2 text-sm md:text-base">Output:</h3>
                         {prompt.output_type === 'image' && (
-                          <img
+                          <Image
                             src={prompt.output_url}
                             alt="AI Generated Output"
+                            width={400}
+                            height={300}
                             className="w-full max-w-md rounded-lg cursor-pointer hover:opacity-90 transition-opacity shadow-md"
                             onClick={() => window.open(prompt.output_url, '_blank')}
                           />

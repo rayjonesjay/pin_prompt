@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,12 +43,7 @@ export default function UploadPage() {
 
   const categories = ['ai', 'art', 'biology', 'fashion', 'food', 'gaming', 'general', 'history', 'math', 'memes', 'programming', 'science', 'sports'];
 
-  useEffect(() => {
-    checkUser();
-    fetchLLMModels();
-  }, []);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) {
       router.push('/');
@@ -64,9 +59,9 @@ export default function UploadPage() {
     if (userProfile) {
       setUser(userProfile);
     }
-  };
+  }, [router]);
 
-  const fetchLLMModels = async () => {
+  const fetchLLMModels = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('llm_models')
@@ -89,7 +84,12 @@ export default function UploadPage() {
     } finally {
       setLoadingModels(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkUser();
+    fetchLLMModels();
+  }, [checkUser, fetchLLMModels]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -259,7 +259,7 @@ export default function UploadPage() {
                 </Label>
                 <Textarea
                   id="thoughts"
-                  placeholder="Share your thoughts about this creation, the process, what inspired you, or anything you'd like the community to know..."
+                  placeholder="Share your thoughts about this creation, the process, what inspired you, or anything you&apos;d like the community to know..."
                   value={userThoughts}
                   onChange={(e) => {
                     const words = getWordCount(e.target.value);
@@ -392,7 +392,7 @@ export default function UploadPage() {
                         <div className="max-h-60 overflow-y-auto">
                           {displayedModels.length === 0 ? (
                             <div className="p-4 text-center text-gray-500">
-                              No models found for "{modelSearchQuery}" in {outputType} category
+                              No models found for &quot;{modelSearchQuery}&quot; in {outputType} category
                             </div>
                           ) : (
                             <>
@@ -446,7 +446,7 @@ export default function UploadPage() {
                 {!loadingModels && (
                   <p className="text-xs text-gray-500">
                     {filteredAndSortedModels.length} models available for {outputType} content
-                    {modelSearchQuery && ` (filtered by "${modelSearchQuery}")`}
+                    {modelSearchQuery && ` (filtered by &quot;${modelSearchQuery}&quot;)`}
                   </p>
                 )}
               </div>
