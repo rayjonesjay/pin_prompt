@@ -40,7 +40,7 @@ export default function UploadPage() {
   const [displayedModelsCount, setDisplayedModelsCount] = useState(20);
   const router = useRouter();
 
-  const categories = ['ai', 'math', 'programming', 'sports', 'science', 'food', 'fashion', 'gaming', 'memes', 'general'];
+  const categories = ['ai', 'art', 'biology', 'fashion', 'food', 'gaming', 'general', 'history', 'math', 'memes', 'programming', 'science', 'sports'];
 
   useEffect(() => {
     checkUser();

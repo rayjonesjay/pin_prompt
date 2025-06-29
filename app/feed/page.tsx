@@ -76,14 +76,17 @@ interface Prompt {
 const getCategoryColor = (category?: string) => {
   switch (category) {
     case 'ai': return 'border-l-teal-500';
-    case 'programming': return 'border-l-blue-500';
-    case 'science': return 'border-l-purple-500';
+    case 'art': return 'border-l-pink-500';
+    case 'biology': return 'border-l-green-500';
+    case 'fashion': return 'border-l-purple-500';
+    case 'food': return 'border-l-orange-500';
     case 'gaming': return 'border-l-red-500';
-    case 'food': return 'border-l-green-500';
-    case 'fashion': return 'border-l-pink-500';
+    case 'history': return 'border-l-amber-500';
     case 'math': return 'border-l-indigo-500';
-    case 'sports': return 'border-l-orange-500';
     case 'memes': return 'border-l-yellow-500';
+    case 'programming': return 'border-l-blue-500';
+    case 'science': return 'border-l-cyan-500';
+    case 'sports': return 'border-l-emerald-500';
     default: return 'border-l-gray-400';
   }
 };
@@ -91,14 +94,17 @@ const getCategoryColor = (category?: string) => {
 const getCategoryBadgeColor = (category?: string) => {
   switch (category) {
     case 'ai': return 'bg-teal-100 text-teal-800';
-    case 'programming': return 'bg-blue-100 text-blue-800';
-    case 'science': return 'bg-purple-100 text-purple-800';
+    case 'art': return 'bg-pink-100 text-pink-800';
+    case 'biology': return 'bg-green-100 text-green-800';
+    case 'fashion': return 'bg-purple-100 text-purple-800';
+    case 'food': return 'bg-orange-100 text-orange-800';
     case 'gaming': return 'bg-red-100 text-red-800';
-    case 'food': return 'bg-green-100 text-green-800';
-    case 'fashion': return 'bg-pink-100 text-pink-800';
+    case 'history': return 'bg-amber-100 text-amber-800';
     case 'math': return 'bg-indigo-100 text-indigo-800';
-    case 'sports': return 'bg-orange-100 text-orange-800';
     case 'memes': return 'bg-yellow-100 text-yellow-800';
+    case 'programming': return 'bg-blue-100 text-blue-800';
+    case 'science': return 'bg-cyan-100 text-cyan-800';
+    case 'sports': return 'bg-emerald-100 text-emerald-800';
     default: return 'bg-gray-100 text-gray-800';
   }
 };

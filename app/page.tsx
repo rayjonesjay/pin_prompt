@@ -252,14 +252,14 @@ export default function LandingPage() {
         {/* Footer - Credits Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-300">
           <div className="flex items-center space-x-4">
-            <span className="text-base lg:text-lg">Built on</span>
+            <span className="text-base lg:text-lg">Built with</span>
             <a 
               href="https://bolt.new/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
             >
-              <span className="text-base lg:text-lg">Bolt</span>
+              <span className="text-base lg:text-lg">Bolt.new</span>
               <img 
                 src="/bolt_budge.png"
                 alt="Bolt" 
