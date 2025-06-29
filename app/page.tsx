@@ -12,13 +12,11 @@ import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [resetEmailSent, setResetEmailSent] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -84,36 +82,6 @@ export default function LandingPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://pinprompt.netlify.app/auth/reset-password',
-      });
-
-      if (error) throw error;
-
-      setResetEmailSent(true);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resetForm = () => {
-    setIsSignUp(false);
-    setIsForgotPassword(false);
-    setResetEmailSent(false);
-    setEmail('');
-    setPassword('');
-    setUsername('');
-    setError('');
   };
 
   return (
@@ -190,167 +158,108 @@ export default function LandingPage() {
         <div className="w-full max-w-md">
           <Card className="bg-white border border-gray-200 shadow-xl">
             <CardContent className="p-6 lg:p-8">
-              {resetEmailSent ? (
-                // Password Reset Email Sent
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="h-8 w-8 text-teal-600" />
+              <div className="text-center mb-6 lg:mb-8">
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
+                <p className="text-gray-600 text-sm lg:text-base">
+                  Sign in to your account or create a new one
+                </p>
+              </div>
+
+              <form onSubmit={handleAuth} className="space-y-4">
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Choose a unique username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
+                    />
                   </div>
-                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Check Your Email</h2>
-                  <p className="text-gray-600 text-sm lg:text-base mb-6">
-                    We've sent a password reset link to <strong>{email}</strong>
-                  </p>
-                  <Button
-                    onClick={resetForm}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    Back to Sign In
-                  </Button>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
+                  />
                 </div>
-              ) : (
-                <>
-                  <div className="text-center mb-6 lg:mb-8">
-                    <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
-                      {isForgotPassword ? 'Reset Password' : 'Welcome'}
-                    </h2>
-                    <p className="text-gray-600 text-sm lg:text-base">
-                      {isForgotPassword 
-                        ? 'Enter your email to receive a reset link'
-                        : 'Sign in to your account or create a new one'
-                      }
-                    </p>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
+                    {error}
                   </div>
+                )}
 
-                  <form onSubmit={isForgotPassword ? handleForgotPassword : handleAuth} className="space-y-4">
-                    {isSignUp && !isForgotPassword && (
-                      <div className="space-y-2">
-                        <Label htmlFor="username" className="text-gray-700 text-sm font-medium">Username</Label>
-                        <Input
-                          id="username"
-                          type="text"
-                          placeholder="Choose a unique username"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          required
-                          className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
-                        />
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-gray-700 text-sm font-medium">
-                        Email
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
-                      />
+                <Button
+                  type="submit"
+                  className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 transition-colors font-medium"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Please wait...
                     </div>
-
-                    {!isForgotPassword && (
-                      <div className="space-y-2">
-                        <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Password</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          minLength={6}
-                          className="bg-white border-gray-300 text-gray-900 focus:border-teal-700 focus:ring-teal-700"
-                        />
-                      </div>
-                    )}
-
-                    {error && (
-                      <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
-                        {error}
-                      </div>
-                    )}
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 transition-colors font-medium"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Please wait...
-                        </div>
-                      ) : (
-                        isForgotPassword ? 'Send Reset Link' : (isSignUp ? 'Sign Up' : 'Sign In')
-                      )}
-                    </Button>
-                  </form>
-
-                  {/* Navigation Links */}
-                  <div className="mt-6 space-y-4">
-                    {!isForgotPassword ? (
-                      <>
-                        {/* Tab Buttons */}
-                        <div className="flex bg-gray-100 rounded-lg p-1">
-                          <button
-                            onClick={() => setIsSignUp(false)}
-                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                              !isSignUp 
-                                ? 'bg-white text-gray-900 shadow-sm' 
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                            }`}
-                          >
-                            Sign In
-                          </button>
-                          <button
-                            onClick={() => setIsSignUp(true)}
-                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                              isSignUp 
-                                ? 'bg-white text-gray-900 shadow-sm' 
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                            }`}
-                          >
-                            Sign Up
-                          </button>
-                        </div>
-
-                        {/* Forgot Password Link */}
-                        {!isSignUp && (
-                          <div className="text-center">
-                            <button
-                              type="button"
-                              onClick={() => setIsForgotPassword(true)}
-                              className="text-sm text-teal-600 hover:text-teal-700 underline"
-                            >
-                              Forgot your password?
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          onClick={resetForm}
-                          className="text-sm text-gray-600 hover:text-gray-900 underline"
-                        >
-                          Back to Sign In
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {isSignUp && !isForgotPassword && (
-                    <p className="text-xs text-gray-500 text-center mt-4">
-                      By signing up, you agree to our terms of service and privacy policy.
-                    </p>
+                  ) : (
+                    isSignUp ? 'Sign Up' : 'Sign In'
                   )}
-                </>
+                </Button>
+              </form>
+
+              {/* Tab Buttons - Moved to bottom */}
+              <div className="flex mt-6 bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setIsSignUp(false)}
+                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    !isSignUp 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setIsSignUp(true)}
+                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    isSignUp 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
+
+              {isSignUp && (
+                <p className="text-xs text-gray-500 text-center mt-4">
+                  By signing up, you agree to our terms of service and privacy policy.
+                </p>
               )}
             </CardContent>
           </Card>

@@ -1,9 +1,0 @@
-# Email confirmation and password reset redirects
-/auth/confirm https://pinprompt.netlify.app/auth/confirm 200
-/auth/reset-password https://pinprompt.netlify.app/auth/reset-password 200
-
-# General email redirects - redirect any auth-related paths to the base URL
-/auth/* https://pinprompt.netlify.app/ 302
-
-# Fallback for any other email-related redirects
-/*    /index.html   200
