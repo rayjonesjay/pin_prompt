@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -87,15 +87,7 @@ export default function ForumPage() {
     { id: 'general', name: 'General', color: 'bg-gray-100' },
   ];
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [searchQuery, selectedCategory, sortBy]);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     
     if (authUser) {
@@ -112,9 +104,9 @@ export default function ForumPage() {
     } else {
       setIsAuthenticated(false);
     }
-  };
+  }, []);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       let query = supabase
         .from('forum_posts')
@@ -175,7 +167,15 @@ export default function ForumPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, selectedCategory, sortBy, user]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const handleCreatePost = async () => {
     if (!newPostTitle.trim() || !newPostContent.trim() || !isAuthenticated || !user) return;

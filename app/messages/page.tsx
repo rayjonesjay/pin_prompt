@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,67 +54,7 @@ export default function MessagesPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  useEffect(() => {
-    if (currentUser) {
-      fetchConversations();
-      
-      // Set up real-time subscription for messages
-      const subscription = supabase
-        .channel('messages')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `receiver_id=eq.${currentUser.id}`
-        }, (payload) => {
-          // Add new message to the current conversation if it's open
-          if (selectedConversation && payload.new.sender_id === selectedConversation.id) {
-            fetchMessages();
-          }
-          // Refresh conversations list
-          fetchConversations();
-        })
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `receiver_id=eq.${currentUser.id}`
-        }, () => {
-          // Refresh conversations when messages are marked as read
-          fetchConversations();
-        })
-        .subscribe();
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [currentUser, selectedConversation]);
-
-  useEffect(() => {
-    if (selectedConversation && currentUser) {
-      fetchMessages();
-      markMessagesAsRead();
-    }
-  }, [selectedConversation, currentUser]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    if (searchQuery) {
-      searchUsers();
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchQuery]);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) {
       router.push('/');
@@ -131,9 +71,9 @@ export default function MessagesPage() {
       setCurrentUser(userProfile);
     }
     setLoading(false);
-  };
+  }, [router]);
 
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     if (!currentUser) return;
 
     try {
@@ -176,9 +116,9 @@ export default function MessagesPage() {
     } catch (error) {
       console.error('Error fetching conversations:', error);
     }
-  };
+  }, [currentUser]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     if (!currentUser || !selectedConversation) return;
 
     try {
@@ -198,9 +138,9 @@ export default function MessagesPage() {
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
-  };
+  }, [currentUser, selectedConversation]);
 
-  const markMessagesAsRead = async () => {
+  const markMessagesAsRead = useCallback(async () => {
     if (!currentUser || !selectedConversation) return;
 
     try {
@@ -216,7 +156,67 @@ export default function MessagesPage() {
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }
-  };
+  }, [currentUser, selectedConversation, fetchConversations]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchConversations();
+      
+      // Set up real-time subscription for messages
+      const subscription = supabase
+        .channel('messages')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${currentUser.id}`
+        }, (payload) => {
+          // Add new message to the current conversation if it's open
+          if (selectedConversation && payload.new.sender_id === selectedConversation.id) {
+            fetchMessages();
+          }
+          // Refresh conversations list
+          fetchConversations();
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${currentUser.id}`
+        }, () => {
+          // Refresh conversations when messages are marked as read
+          fetchConversations();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [currentUser, selectedConversation, fetchConversations, fetchMessages]);
+
+  useEffect(() => {
+    if (selectedConversation && currentUser) {
+      fetchMessages();
+      markMessagesAsRead();
+    }
+  }, [selectedConversation, currentUser, fetchMessages, markMessagesAsRead]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      searchUsers();
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
 
   const sendMessage = async () => {
     if (!currentUser || !selectedConversation || !newMessage.trim()) return;
