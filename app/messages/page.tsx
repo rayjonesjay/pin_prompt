@@ -158,6 +158,25 @@ export default function MessagesPage() {
     }
   }, [currentUser, selectedConversation, fetchConversations]);
 
+  const searchUsers = useCallback(async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, username, avatar_url')
+        .ilike('username', `%${searchQuery}%`)
+        .neq('id', currentUser?.id)
+        .limit(10);
+
+      if (error) throw error;
+
+      setSearchResults(data || []);
+    } catch (error) {
+      console.error('Error searching users:', error);
+    }
+  }, [searchQuery, currentUser]);
+
   useEffect(() => {
     checkUser();
   }, [checkUser]);
@@ -216,7 +235,7 @@ export default function MessagesPage() {
     } else {
       setSearchResults([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, searchUsers]);
 
   const sendMessage = async () => {
     if (!currentUser || !selectedConversation || !newMessage.trim()) return;
@@ -249,25 +268,6 @@ export default function MessagesPage() {
       console.error('Error sending message:', error);
     } finally {
       setSendingMessage(false);
-    }
-  };
-
-  const searchUsers = async () => {
-    if (!searchQuery.trim()) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, username, avatar_url')
-        .ilike('username', `%${searchQuery}%`)
-        .neq('id', currentUser?.id)
-        .limit(10);
-
-      if (error) throw error;
-
-      setSearchResults(data || []);
-    } catch (error) {
-      console.error('Error searching users:', error);
     }
   };
 

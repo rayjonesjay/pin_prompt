@@ -43,40 +43,6 @@ export default function NotificationsPage() {
   const [markingAsRead, setMarkingAsRead] = useState<Set<string>>(new Set());
   const router = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      // Set up real-time subscription
-      const subscription = supabase
-        .channel('notifications')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        }, (payload) => {
-          setNotifications(prev => [payload.new as Notification, ...prev]);
-        })
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        }, () => {
-          fetchNotifications();
-        })
-        .subscribe();
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [user]);
-
   const checkUser = async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) {
@@ -114,6 +80,40 @@ export default function NotificationsPage() {
       console.error('Error fetching notifications:', error);
     }
   };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      // Set up real-time subscription
+      const subscription = supabase
+        .channel('notifications')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        }, (payload) => {
+          setNotifications(prev => [payload.new as Notification, ...prev]);
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        }, () => {
+          fetchNotifications();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [user]);
 
   const markAsRead = async (notificationId: string) => {
     if (markingAsRead.has(notificationId)) return;
@@ -267,7 +267,7 @@ export default function NotificationsPage() {
                 No notifications yet
               </h3>
               <p className="text-gray-500">
-                When someone likes your posts, follows you, or sends a message, you'll see it here
+                When someone likes your posts, follows you, or sends a message, you&apos;ll see it here
               </p>
             </CardContent>
           </Card>
