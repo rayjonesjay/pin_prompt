@@ -4,8 +4,6 @@
 
 PinPrompt is a modern social platform designed for AI content creators to share, discover, and discuss AI-generated content along with the prompts that created them. Built with Next.js, Supabase, and Tailwind CSS.
 
-![PinPrompt Banner](https://via.placeholder.com/1200x400/0f766e/ffffff?text=PinPrompt+-+AI+Content+Sharing+Platform)
-
 ## ✨ Features
 
 ### 🎯 Core Features
