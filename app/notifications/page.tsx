@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
   const [markingAsRead, setMarkingAsRead] = useState<Set<string>>(new Set());
   const router = useRouter();
 
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (!authUser) {
       router.push('/');
@@ -60,9 +60,9 @@ export default function NotificationsPage() {
       setUser(userProfile);
     }
     setLoading(false);
-  };
+  }, [router]);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -79,11 +79,11 @@ export default function NotificationsPage() {
     } catch (error) {
       console.error('Error fetching notifications:', error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     checkUser();
-  }, []);
+  }, [checkUser]);
 
   useEffect(() => {
     if (user) {
@@ -113,7 +113,7 @@ export default function NotificationsPage() {
         subscription.unsubscribe();
       };
     }
-  }, [user]);
+  }, [user, fetchNotifications]);
 
   const markAsRead = async (notificationId: string) => {
     if (markingAsRead.has(notificationId)) return;
