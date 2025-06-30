@@ -252,35 +252,35 @@ export default function LandingPage() {
 
         {/* Footer - Credits Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-6 text-teal-300">
-          <div className="flex items-center space-x-4">
-            <span className="text-base lg:text-lg">Built with</span>
-            <a 
-              href="https://bolt.new/" 
-              target="_blank" 
+          <a
+              href="https://github.com/rayjonesjay/pin_prompt"
+              target="_blank"
               rel="noopener noreferrer"
-              className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
-            >
-              <span className="text-base lg:text-lg">Bolt.new</span>
-              <Image 
-                src="/bolt_budge.png"
-                alt="Bolt" 
-                width={80}
-                height={80}
-                className="w-16 h-16 lg:w-20 lg:h-20 object-contain"
-              />
-              <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5" />
-            </a>
-          </div>
-          <div className="w-1 h-1 bg-teal-500 rounded-full hidden sm:block"></div>
-          <a 
-            href="https://github.com/rayjonesjay/pin_prompt"
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-teal-300 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-teal-300 hover:text-white transition-colors"
           >
             <Github className="h-4 w-4" />
             <span className="text-sm">rayjonesjay</span>
           </a>
+          <div className="w-1 h-1 bg-teal-500 rounded-full hidden sm:block"></div>
+          <div className="flex items-center space-x-4">
+            <span className="text-base lg:text-lg">Built with</span>
+            <a
+                href="https://bolt.new/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-teal-200 transition-colors font-medium flex items-center space-x-4"
+            >
+              <span className="text-base lg:text-lg">Bolt.new</span>
+              <Image
+                  src="/bolt_budge.png"
+                  alt="Bolt"
+                  width={80}
+                  height={80}
+                  className="w-16 h-16 lg:w-20 lg:h-20 object-contain"
+              />
+              <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5" />
+            </a>
+          </div>
         </div>
       </div>
 
