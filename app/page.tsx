@@ -273,7 +273,7 @@ export default function LandingPage() {
           </div>
           <div className="w-1 h-1 bg-teal-500 rounded-full hidden sm:block"></div>
           <a 
-            href="https://github.com/rayjonesjay" 
+            href="https://github.com/rayjonesjay/pin_prompt"
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center space-x-2 text-teal-300 hover:text-white transition-colors"
